@@ -67,7 +67,7 @@ class NeuralNetwork(object):
         self.W2 = np.random.randn(self.nn_hidden_dim, self.nn_output_dim) / np.sqrt(self.nn_hidden_dim)
         self.b2 = np.zeros((1, self.nn_output_dim))
 
-    def actFun(self, z, type):
+    def act_Fun(self, z, type):
         '''
         actFun computes the activation functions
         :param z: net input
@@ -93,12 +93,10 @@ class NeuralNetwork(object):
         if (type == 'tanh'):
             dL = 1 - np.tanh(z)**2
         elif (type == 'sigmoid'):
-            sig_fn = self.actFun(z,self.type)
+            sig_fn = self.act_Fun(z,self.type)
             dL = sig_fn(1 - sig_fn)
         else:
             dL = 1.0/(1.0 + np.exp(-z))
-
-
 
         # YOU IMPLEMENT YOUR diff_actFun HERE
 
@@ -115,9 +113,9 @@ class NeuralNetwork(object):
 
         # YOU IMPLEMENT YOUR feedforward HERE
 
-        # self.z1 =
-        # self.a1 =
-        # self.z2 =
+        self.z1 = (self.W1.T)*X + self.b1
+        self.a1 = actFun(self.z1,actFun)
+        self.z2 = (self.W2.T)*(self.a1) + self.b2
         exp_scores = np.exp(self.z2)
         self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
         return None
@@ -135,7 +133,7 @@ class NeuralNetwork(object):
 
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
 
-        # data_loss =
+        data_loss = 0 **
 
         # Add regulatization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
