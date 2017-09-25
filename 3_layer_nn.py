@@ -138,8 +138,11 @@ class NeuralNetwork(object):
 
 
         y.resize((200,1))
+        y_dash = np.concatenate((y,1-y), axis = 1)
         for i in range(num_examples):
-            data_loss += y[i]*(math.log10(self.probs[i][0])) + (1-y)*(math.log10(self.probs[i][1]))
+            data_loss += y[i]*math.log10(self.probs[i][0]) + (1 - y[i])*math.log10(self.probs[i][1])
+        #for i in range(num_examples):
+         #   data_loss += y[i]*(math.log10(self.probs[i][0])) + (1-y)*(math.log10(self.probs[i][1]))
         # Add regulatization term to loss (optional)
 
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
