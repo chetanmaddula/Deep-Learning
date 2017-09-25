@@ -1,5 +1,7 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
+import math
+from sklearn import datasets
 
 def generate_data():
     '''
@@ -67,33 +69,33 @@ class NeuralNetwork(object):
         self.W2 = np.random.randn(self.nn_hidden_dim, self.nn_output_dim) / np.sqrt(self.nn_hidden_dim)
         self.b2 = np.zeros((1, self.nn_output_dim))
 
-    def act_Fun(self, z, type):
+    def actFun(self, z, type):
         '''
         actFun computes the activation functions
         :param z: net input
         :param type: Tanh, Sigmoid, or ReLU
         :return: activations
         '''
-        if(type == 'tanh'):
+        if type == 'tanh':
             activations = np.tanh(z)
-        elif(type == 'sigmoid'):
+        elif type == 'sigmoid':
             activations = 1/(1 + np.exp(-z))
         else:
             activations = np.log(1 + np.exp(z))
         return activations
 
 
-    def diff_actFun(self, z, type):
+    def diff_actFun(self, z,type):
         '''
         diff_actFun computes the derivatives of the activation functions wrt the net input
         :param z: net input
         :param type: Tanh, Sigmoid, or ReLU
         :return: the derivatives of the activation functions wrt the net input
         '''
-        if (type == 'tanh'):
+        if type == 'tanh':
             dL = 1 - np.tanh(z)**2
-        elif (type == 'sigmoid'):
-            sig_fn = self.act_Fun(z,self.type)
+        elif type == 'sigmoid':
+            sig_fn = self.actFun(z,type)
             dL = sig_fn(1 - sig_fn)
         else:
             dL = 1.0/(1.0 + np.exp(-z))
@@ -113,9 +115,9 @@ class NeuralNetwork(object):
 
         # YOU IMPLEMENT YOUR feedforward HERE
 
-        self.z1 = (self.W1.T)*X + self.b1
-        self.a1 = actFun(self.z1,actFun)
-        self.z2 = (self.W2.T)*(self.a1) + self.b2
+        self.z1 = X.dot(self.W1) + self.b1
+        self.a1 = self.actFun(self.z1, actFun)
+        self.z2 = self.a1.dot(self.W2) + self.b2
         exp_scores = np.exp(self.z2)
         self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
         return None
@@ -130,12 +132,16 @@ class NeuralNetwork(object):
         num_examples = len(X)
         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
         # Calculating the loss
+        data_loss = 0
 
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
 
-        data_loss = 0 **
 
+        y.resize((200,1))
+        for i in range(num_examples):
+            data_loss += y[i]*(math.log10(self.probs[i][0])) + (1-y)*(math.log10(self.probs[i][1]))
         # Add regulatization term to loss (optional)
+
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
         return (1. / num_examples) * data_loss
 
@@ -160,10 +166,10 @@ class NeuralNetwork(object):
         num_examples = len(X)
         delta3 = self.probs
         delta3[range(num_examples), y] -= 1
-        # dW2 = dL/dW2
-        # db2 = dL/db2
-        # dW1 = dL/dW1
-        # db1 = dL/db1
+        dW2 = 0 # dL/dy^ * dy^/dz2*dz2/dw2 ()
+        db2 = 0 # dL/db2
+        dW1 = 0 #dL/d
+        db1 = 0 # dL/db1
         return dW1, dW2, db1, db2
 
     def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
@@ -210,14 +216,14 @@ class NeuralNetwork(object):
 def main():
 
 
-# # generate and visualize Make-Moons dataset
-X, y = generate_data()
-plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
-plt.show()
+# generate and visualize Make-Moons dataset
+    X, y = generate_data()
+    plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
+    plt.show()
 
-model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
-model.fit_model(X,y)
-model.visualize_decision_boundary(X,y)
+    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
+    model.fit_model(X,y)
+    model.visualize_decision_boundary(X,y)
 
 if __name__ == "__main__":
     main()
