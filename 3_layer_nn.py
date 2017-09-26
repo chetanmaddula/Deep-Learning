@@ -164,6 +164,7 @@ class NeuralNetwork(object):
         :return: dL/dW1, dL/b1, dL/dW2, dL/db2
         '''
 
+
         # IMPLEMENT YOUR BACKPROP HERE
         num_examples = len(X)
         delta3 = self.probs
