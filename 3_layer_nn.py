@@ -93,10 +93,10 @@ class NeuralNetwork(object):
         :return: the derivatives of the activation functions wrt the net input
         '''
         if type == 'tanh':
-            dL = 1 - np.tanh(z)**2
+            dL = 1 - self.a1**2
         elif type == 'sigmoid':
             sig_fn = self.actFun(z,type)
-            dL = sig_fn(1 - sig_fn)
+            dL = self.a1*(1 - self.a1)
         else:
             dL = 1.0/(1.0 + np.exp(-z))
 
@@ -170,14 +170,10 @@ class NeuralNetwork(object):
         delta3[range(num_examples), y] -= 1
         dW2 = (self.a1.T).dot(delta3)
         db2 = np.sum(delta3, axis=0, keepdims=True)
-        delta2 = delta3.dot(self.W2.T) * (1 - np.power(self.a1, 2))
+        delta2 = delta3.dot(self.W2.T) * self.diff_actFun(self.z1,self.actFun_type)
         dW1 = np.dot(X.T, delta2)
         db1 = np.sum(delta2, axis=0)
 
-        #       dW2 = (a1.T).dot(delta3)
-  #      db2 = np.sum(delta3, axis=0, keepdims=True)
-   ##    dW1 = np.dot(X.T, delta2)
-     #   db1 = np.sum(delta2, axis=0)
         return dW1, dW2, db1, db2
 
     def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
@@ -229,7 +225,7 @@ def main():
     plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
     plt.show()
 
-    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
+    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='ReLU')
     model.fit_model(X,y)
     model.visualize_decision_boundary(X,y)
 
