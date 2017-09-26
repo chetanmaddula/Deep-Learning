@@ -116,7 +116,7 @@ class NeuralNetwork(object):
         # YOU IMPLEMENT YOUR feedforward HERE
 
         self.z1 = X.dot(self.W1) + self.b1
-        self.a1 = self.actFun(self.z1, actFun)
+        self.a1 = self.actFun(self.z1, self.actFun_type)
         self.z2 = self.a1.dot(self.W2) + self.b2
         exp_scores = np.exp(self.z2)
         self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
@@ -135,10 +135,11 @@ class NeuralNetwork(object):
         #data_loss = 0
 
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
+        corect_logprobs = -np.log(self.probs[range(num_examples), y])
+        data_loss = np.sum(corect_logprobs)
 
 
-
-        data_loss = sum(y*np.log(self.probs[:,0])) + sum((1 - y)*np.log(self.probs[:,1]))
+        
         #for i in range(num_examples):
          #   data_loss += y[i]*(math.log10(self.probs[i][0])) + (1-y)*(math.log10(self.probs[i][1]))
         # Add regulatization term to loss (optional)
