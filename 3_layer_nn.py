@@ -132,7 +132,7 @@ class NeuralNetwork(object):
         num_examples = len(X)
         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
         # Calculating the loss
-        data_loss = 0
+        #data_loss = 0
 
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
 
@@ -167,10 +167,16 @@ class NeuralNetwork(object):
         num_examples = len(X)
         delta3 = self.probs
         delta3[range(num_examples), y] -= 1
-        dW2 = 0 # dL/dy^ * dy^/dz2*dz2/dw2 ()
-        db2 = 0 # dL/db2
-        dW1 = 0 #dL/d
-        db1 = 0 # dL/db1
+        dW2 = (self.a1.T).dot(delta3)
+        db2 = np.sum(delta3, axis=0, keepdims=True)
+        delta2 = delta3.dot(self.W2.T) * (1 - np.power(self.a1, 2))
+        dW1 = np.dot(X.T, delta2)
+        db1 = np.sum(delta2, axis=0)
+
+        #       dW2 = (a1.T).dot(delta3)
+  #      db2 = np.sum(delta3, axis=0, keepdims=True)
+   ##    dW1 = np.dot(X.T, delta2)
+     #   db1 = np.sum(delta2, axis=0)
         return dW1, dW2, db1, db2
 
     def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
@@ -190,8 +196,8 @@ class NeuralNetwork(object):
             dW1, dW2, db1, db2 = self.backprop(X, y)
 
             # Add regularization terms (b1 and b2 don't have regularization terms)
-            dW2 += self.reg_lambda * self.W2
-            dW1 += self.reg_lambda * self.W1
+            dW2 += self.reg_lambda * self.W2/len(X)
+            dW1 += self.reg_lambda * self.W1/len(X)
 
             # Gradient descent parameter update
             self.W1 += -epsilon * dW1
