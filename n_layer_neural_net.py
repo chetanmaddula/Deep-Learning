@@ -43,6 +43,7 @@ class DeepNeuralNetwork(NeuralNetwork):
     def fit_model(self, X, y, epsilon=0.005, num_passes=20000, print_loss=True):
 
 
+
 class layer(NeuralNetwork):
     def __init__(self,id1,nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01, seed=0):
         NeuralNetwork.__init__(self, nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01,
