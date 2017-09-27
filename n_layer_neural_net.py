@@ -67,7 +67,13 @@ class layer(NeuralNetwork):
         self.delta_next = self.delta.dot(self.W.T)*self.diff_actFun(self.z,self.actFun_type)
 
         return self.delta_next
-    def fit_model1(self,X,y):
+
+    def fit_model1(self,epsilon=0.005):
+        self.dw +=self.reg_lambda*self.W
+        self.W += -epsilon*self.dw
+        self.b += -epsilon*self.db
+
+
 
 
 
