@@ -33,6 +33,9 @@ class DeepNeuralNetwork(NeuralNetwork):
         for i in range(self.num_layer):
             layer1[i] = layer(self.nn_input_dim, self.nn_hidden_dim, self.nn_output_dim, self.actFun_type, self.reg_lambda)
             a_layer = layer1[i].feedforward(a_layer,self.actFun_type)
+        self.z2 = a_layer.dot(self.W2) + self.b2
+        exp_scores = np.exp(self.z2)
+        self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
 
 
     def backprop(self, X, y):
@@ -44,6 +47,7 @@ class DeepNeuralNetwork(NeuralNetwork):
         delta1 = delta3.dot(self.W2.T)
         for i in range(self.num_layer,0,step = -1):
             delta1 = layer1[i].backprop(X,y,delta1)
+        delta1 = delta1*self.diff_actFun(self.z1,self.actFun_type)
         self.dW1 = np.dot(X.T,delta1)
         self.db1 = np.sum(delta1, axis = 0)
 
