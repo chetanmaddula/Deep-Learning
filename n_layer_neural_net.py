@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 import math
 from sklearn import datasets
 layer1 = []
+def generate_data():
+    '''
+    generate data
+    :return: X: input data, y: given labels
+    '''
+    np.random.seed(0)
+    X, y = datasets.make_moons(200, noise=0.20)
+    return X, y
+
+
+
 class DeepNeuralNetwork(NeuralNetwork):
     def __init__(self,nn_layer,nn_layer_size,nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01, seed=0):
         NeuralNetwork.__init__(self,nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01, seed=0)
