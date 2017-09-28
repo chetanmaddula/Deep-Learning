@@ -41,7 +41,7 @@ class DeepNeuralNetwork(NeuralNetwork):
         delta3[range(num_examples), y] -= 1
         self.dW2 = (self.a1.T).dot(delta3)
         self.db2 = np.sum(delta3, axis=0, keepdims=True)
-        delta1 = delta3
+        delta1 = delta3.dot(self.W2.T)
         for i in range(self.num_layer,0,step = -1):
             delta1 = layer1[i].backprop(X,y,delta1)
         self.dW1 = np.dot(X.T,delta1)
@@ -73,9 +73,10 @@ class layer(NeuralNetwork):
 
     def backprop(self, X, delta, y):
         num_examples = len(X)
-        self.delta_next = delta.dot(self.W.T) * self.diff_actFun(self.z, self.actFun_type)
+        self.delta_next = delta*self.diff_actFun(self.z, self.actFun_type)
         self.dw = np.dot(X.T,self.delta_next)
         self.db = np.sum(self.delta_next,axis=0)
+        self.delta_next = self.delta_next.dot(self.W.T)
 
 
         return self.delta_next
