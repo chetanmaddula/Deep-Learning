@@ -141,15 +141,16 @@ def main():
     # model.fit_model(X, y)
     # model.visualize_decision_boundary(X, y)
     plt.figure(figsize=(16, 32))
-    hidden_lay = [2, 4, 6, 8, 10, 20, 50]
-    for i, nn_hidden_dim1 in enumerate(hidden_lay):
+    hidden_lay = [2]
         # plt.subplot(5,2,i+1)
         # plt.title('Hidden layer with size %d' % nn_hidden_dim1)
-        model = DeepNeuralNetwork(nn_layer=7,nn_input_dim=2, nn_hidden_dim=nn_hidden_dim1, nn_output_dim=2, actFun_type='tanh')
-        model.fit_model(X, y)
-        model.visualize_decision_boundary(X, y)
+    model = DeepNeuralNetwork(nn_layer=7,nn_input_dim=2, nn_hidden_dim=3, nn_output_dim=2, actFun_type='tanh')
+    model.fit_model(X, y)
+    model.visualize_decision_boundary(X, y)
 
 
+if __name__ == "__main__":
+    main()
 
 
 
