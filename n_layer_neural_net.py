@@ -102,14 +102,14 @@ class DeepNeuralNetwork(NeuralNetwork):
 
 
 
-class layer(NeuralNetwork):
-    def __init__(self,id1,nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01, seed=0):
-        NeuralNetwork.__init__(self, nn_input_dim, nn_hidden_dim, nn_output_dim, actFun_type='tanh', reg_lambda=0.01,
-                               seed=0)
+class layer(object):
+    def __init__(self, nn_hidden_dim, actFun_type='tanh', reg_lambda=0.01, seed=0):
+
         self.id = id1
         np.random.seed(seed)
-        self.W = np.random.randn(self.nn_hidden_dim, self.nn_hidden_dim) / np.sqrt(self.nn_input_dim)
+        self.W = np.random.randn(nn_hidden_dim, nn_hidden_dim) / np.sqrt(self.nn_hidden_dim)
         self.b = np.zeros((1, self.nn_hidden_dim))
+        self.actFun_type = actFun_type
 
 
     def feedforward(self, X, actFun):
