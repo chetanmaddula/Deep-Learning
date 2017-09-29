@@ -1,13 +1,13 @@
 import os
 import time
+import tensorflow as tf
+sess = tf.InteractiveSession()
 
 # Load MNIST dataset
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 
 # Import Tensorflow and start a session
-import tensorflow as tf
-sess = tf.InteractiveSession()
 
 def weight_variable(shape):
     '''
