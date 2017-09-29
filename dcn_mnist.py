@@ -21,6 +21,7 @@ def weight_variable(shape):
     '''
 
     # IMPLEMENT YOUR WEIGHT_VARIABLE HERE
+    W = tf.Variable(tf.zeros([784,10]))
 
     return W
 
@@ -33,6 +34,7 @@ def bias_variable(shape):
     '''
 
     # IMPLEMENT YOUR BIAS_VARIABLE HERE
+    b = tf.Variable(tf.zeros([10]))
 
     return b
 
@@ -77,8 +79,9 @@ def main():
     # FILL IN THE CODE BELOW TO BUILD YOUR NETWORK
 
     # placeholders for input data and input labeles
-    x =
-    y_ =
+    x = tf.placeholder(tf.float32,shape= [None, 784])
+
+    y_ = tf.placeholder(tf.float32,shape= [None,10])
 
     # reshape the input image
     x_image = tf.reshape(x, [-1, 28, 28, 1]
