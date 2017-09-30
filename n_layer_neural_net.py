@@ -102,7 +102,7 @@ def main():
     hidden_lay = [2]
         # plt.subplot(5,2,i+1)
         # plt.title('Hidden layer with size %d' % nn_hidden_dim1)
-    model = DeepNeuralNetwork(nn_layer=10,nn_input_dim=2, nn_hidden_dim=5, nn_output_dim=2, actFun_type='tanh')
+    model = DeepNeuralNetwork(nn_layer=10,nn_input_dim=2, nn_hidden_dim=4, nn_output_dim=2, actFun_type='tanh')
     model.fit_model(X, y)
     model.visualize_decision_boundary(X, y)
 
