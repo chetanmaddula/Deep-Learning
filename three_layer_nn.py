@@ -1,8 +1,7 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import math
-from sklearn import datasets
 
+import matplotlib.pyplot as plt
+from sklearn import datasets
+import numpy as np
 
 def generate_data():
     '''
