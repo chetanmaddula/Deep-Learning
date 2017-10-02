@@ -167,6 +167,11 @@ def main():
             train_accuracy = accuracy.eval(feed_dict={
                 x:batch[0], y_:batch[1], keep_prob: 1.0})
             print("step %d, training accuracy %g"%(i, train_accuracy))
+            if i % 1100 == 0 or i == max_step:
+                tf.summary.scalar("test accuracy %g" % accuracy.eval(feed_dict={
+                    x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+                tf.summary.scalar("valid accuracy %g" % accuracy.eval(feed_dict={
+                    x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
 
             # Update the events file which is used to monitor the training (in this case,
             # only the training loss is monitored)
@@ -176,10 +181,7 @@ def main():
 
         # save the checkpoints every 1100 iterations
         if i % 1100 == 0 or i == max_step:
-            tf.summary.scalar("test accuracy %g" % accuracy.eval(feed_dict={
-                x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
-            tf.summary.scalar("valid accuracy %g" % accuracy.eval(feed_dict={
-                x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
+
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
 
@@ -194,12 +196,12 @@ def main():
 
 
 def hist(x):
-    tf.summary.histogram(str(x), x)
-    tf.summary.scalar(str(x) + '_min', tf.reduce_min(x))
-    tf.summary.scalar(str(x) + '_max', tf.reduce_max(x))
-    tf.summary.scalar(str(x) + '_mean', tf.reduce_mean(x))
+    tf.summary.histogram("1", x)
+    tf.summary.scalar('1_min', tf.reduce_min(x))
+    tf.summary.scalar('1_max', tf.reduce_max(x))
+    tf.summary.scalar('1_mean', tf.reduce_mean(x))
     mean = tf.reduce_mean(x)
-    tf.summary.scalar(str(x) + '_sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
+    tf.summary.scalar('1_sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
 
 
 if __name__ == "__main__":
