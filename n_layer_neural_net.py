@@ -11,7 +11,7 @@ def generate_data():
     :return: X: input data, y: given labels
     '''
     np.random.seed(0)
-    X, y = datasets.make_moons(200, noise=0.20)
+    X, y = datasets.make_moons(n_samples=200, noise = 0.1)
     return X, y
 
 
@@ -22,10 +22,6 @@ class DeepNeuralNetwork(NeuralNetwork):
         self.num_layer = nn_layer
         np.random.seed(seed)
         self.nn_hidden_dim = nn_hidden_dim
-        self.W1 = np.random.randn(self.nn_input_dim, self.nn_hidden_dim) / np.sqrt(self.nn_input_dim)
-        self.b1 = np.zeros((1, self.nn_hidden_dim))
-        self.W2 = np.random.randn(self.nn_hidden_dim, self.nn_output_dim) / np.sqrt(self.nn_input_dim)
-        self.b2 = np.zeros((1, self.nn_output_dim))
         self.layers1 = []
         self.actFun_type = actFun_type
 
@@ -70,7 +66,7 @@ class DeepNeuralNetwork(NeuralNetwork):
         data_loss += self.reg_lambda / 2 * (w_sum)
         return (1. / num_examples) * data_loss
 
-    def fit_model(self, X, y, epsilon=0.005, num_passes=20000, print_loss=True):
+    def fit_model(self, X, y, epsilon=0.005, num_passes=5000, print_loss=True):
         for i in range(0, num_passes):
             # Forward propagation
             self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
@@ -99,10 +95,8 @@ def main():
     # model.fit_model(X, y)
     # model.visualize_decision_boundary(X, y)
     plt.figure(figsize=(16, 32))
-    hidden_lay = [2]
-        # plt.subplot(5,2,i+1)
-        # plt.title('Hidden layer with size %d' % nn_hidden_dim1)
-    model = DeepNeuralNetwork(nn_layer=10,nn_input_dim=2, nn_hidden_dim=4, nn_output_dim=2, actFun_type='tanh')
+
+    model = DeepNeuralNetwork(nn_layer=25,nn_input_dim=5, nn_hidden_dim=5, nn_output_dim=2, actFun_type='tanh')
     model.fit_model(X, y)
     model.visualize_decision_boundary(X, y)
 
