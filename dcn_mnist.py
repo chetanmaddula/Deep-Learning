@@ -121,9 +121,25 @@ def main():
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-    tf.summary.histogram("W_conv1", W_conv1)
-    tf.summary.histogram("b_conv1", b_conv1)
-    tf.summary.histogram("h_conv1", h_conv1)
+    hist(x_image)
+
+    hist(W_conv1)
+    hist(b_conv1)
+    hist(h_conv1)
+    hist(h_pool1)
+
+    hist(W_conv2)
+    hist(b_conv2)
+    hist(h_conv2)
+    hist(h_pool2)
+
+    hist(h_pool2_flat)
+    hist(W_fc1)
+    hist(b_fc1)
+    hist(h_fc1)
+    hist(h_pool1)
+
+
 
     # Add a scalar summary for the snapshot loss.
     tf.summary.scalar(cross_entropy.op.name, cross_entropy)
@@ -160,6 +176,10 @@ def main():
 
         # save the checkpoints every 1100 iterations
         if i % 1100 == 0 or i == max_step:
+            tf.summary.scalar("test accuracy %g" % accuracy.eval(feed_dict={
+                x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+            tf.summary.scalar("valid accuracy %g" % accuracy.eval(feed_dict={
+                x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
 
@@ -171,6 +191,16 @@ def main():
 
     stop_time = time.time()
     print('The training takes %f second to finish'%(stop_time - start_time))
+
+
+def hist(x):
+    tf.summary.histogram(str(x), x)
+    tf.summary.scalar(str(x) + '_min', tf.reduce_min(x))
+    tf.summary.scalar(str(x) + '_max', tf.reduce_max(x))
+    tf.summary.scalar(str(x) + '_mean', tf.reduce_mean(x))
+    mean = tf.reduce_mean(x)
+    tf.summary.scalar(str(x) + '_sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
+
 
 if __name__ == "__main__":
     main()
