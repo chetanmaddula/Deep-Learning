@@ -121,6 +121,10 @@ def main():
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+    tf.summary.histogram("W_conv1", W_conv1)
+    tf.summary.histogram("b_conv1", b_conv1)
+    tf.summary.histogram("h_conv1", h_conv1)
+
     # Add a scalar summary for the snapshot loss.
     tf.summary.scalar(cross_entropy.op.name, cross_entropy)
     # Build the summary operation based on the TF collection of Summaries.
