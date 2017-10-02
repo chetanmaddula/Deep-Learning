@@ -38,6 +38,9 @@ def bias_variable(shape):
 
     return tf.Variable(initial)
 
+def leaky_relu (x, alp):
+    return tf.nn.relu(x) - alp * tf.nn.relu(-x)
+
 def conv2d(x, W):
     '''
     Perform 2-D convolution
@@ -89,6 +92,7 @@ def main():
     # first convolutional layer
     W_conv1 = weight_variable([5, 5, 1, 32])
     b_conv1 = bias_variable([32])
+    #h_conv1 = leaky_relu(conv2d(x_image, W_conv1) + b_conv1)
     h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
     h_pool1 = max_pool_2x2(h_conv1)
 
@@ -168,9 +172,9 @@ def main():
                 x:batch[0], y_:batch[1], keep_prob: 1.0})
             print("step %d, training accuracy %g"%(i, train_accuracy))
             if i % 1100 == 0 or i == max_step:
-                tf.summary.scalar("test accuracy %g" , accuracy.eval(feed_dict={
+                tf.summary.scalar("test accuracy" , accuracy.eval(feed_dict={
                     x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
-                tf.summary.scalar("valid accuracy %g" , accuracy.eval(feed_dict={
+                tf.summary.scalar("valid accuracy" , accuracy.eval(feed_dict={
                     x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
 
             # Update the events file which is used to monitor the training (in this case,
