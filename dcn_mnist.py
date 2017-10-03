@@ -42,7 +42,7 @@ def bias_variable(shape):
 
 #
 
-def leaky_relu (x, alp):
+def leaky_relu (x, alp=0.01):
 
     return tf.nn.relu(x) - alp * tf.nn.relu(-x)
 
