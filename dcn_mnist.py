@@ -24,6 +24,8 @@ def weight_variable(shape):
 
     # IMPLEMENT YOUR WEIGHT_VARIABLE HERE
     initial = tf.truncated_normal(shape,stddev=0.1)
+   # W1 = tf.get_variable("W", shape=[784, 256],
+   #                     initializer=tf.contrib.layers.xavier_initializer())
 
     return tf.Variable(initial)
 
@@ -101,32 +103,41 @@ def main():
     x_image = tf.reshape(x, [-1, 28, 28, 1])
 
     # first convolutional layer
-    W_conv1 = weight_variable([5, 5, 1, 32])
+    W_conv1 = tf.get_variable("W_conv1", shape=[5, 5, 1, 32],
+                              initializer=tf.contrib.layers.xavier_initializer())
+    #W_conv1 = weight_variable([5, 5, 1, 32])
     b_conv1 = bias_variable([32])
-    h_conv1 = tf.sigmoid(conv2d(x_image, W_conv1) + b_conv1)
-    #h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
+
+    #h_conv1 = tf.sigmoid(conv2d(x_image, W_conv1) + b_conv1)
+    h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
     h_pool1 = max_pool_2x2(h_conv1)
 
     # second convolutional layer
-    W_conv2 = weight_variable([5,5,32,64])
+    W_conv2 = tf.get_variable("W_conv2", shape=[5,5,32,64],
+                              initializer=tf.contrib.layers.xavier_initializer())
+    #W_conv2 = weight_variable([5,5,32,64])
     b_conv2 = bias_variable([64])
-    #h_conv2 = tf.nn.relu(conv2d(h_pool1,W_conv2) + b_conv2)
-    h_conv2 = tf.sigmoid(conv2d(h_pool1, W_conv2) + b_conv2)
+    h_conv2 = tf.nn.relu(conv2d(h_pool1,W_conv2) + b_conv2)
+    #h_conv2 = tf.sigmoid(conv2d(h_pool1, W_conv2) + b_conv2)
     h_pool2 = max_pool_2x2(h_conv2)
 
     # densely connected layer
-    W_fc1 = weight_variable([7 * 7 * 64, 1024])
+    W_fc1 = tf.get_variable("W_fc1", shape=[7 * 7 * 64, 1024],
+                              initializer=tf.contrib.layers.xavier_initializer())
+    #W_fc1 = weight_variable([7 * 7 * 64, 1024])
     b_fc1 = bias_variable([1024])
     h_pool2_flat = tf.reshape(h_pool2,[-1, 7*7*64])
-    #h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
-    h_fc1 = tf.sigmoid(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+    h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+    #h_fc1 = tf.sigmoid(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
     # dropout
     keep_prob = tf.placeholder(tf.float32)
     h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
     # softmax
-    W_fc2 = weight_variable([1024,10])
+    W_fc2 = tf.get_variable("W_fc2", shape=[1024,10],
+                            initializer=tf.contrib.layers.xavier_initializer())
+    #W_fc2 = weight_variable([1024,10])
     b_fc2 = bias_variable([10])
     y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
