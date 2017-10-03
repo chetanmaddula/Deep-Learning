@@ -152,9 +152,8 @@ def main():
     hist(b_fc1,'b_fc1')
     hist(h_fc1,'h_fc1')
 
-    #tf.summary.scalar("test accuracy", accuracy.eval(feed_dict={ x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
-    #tf.summary.scalar("valid accuracy", accuracy.eval(feed_dict={ x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
-
+    valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
+    test_sum = tf.summary.scalar("test accuracy",accuracy)
     # Add a scalar summary for the snapshot loss.
     tf.summary.scalar(cross_entropy.op.name, cross_entropy)
     # Build the summary operation based on the TF collection of Summaries.
@@ -183,14 +182,29 @@ def main():
             print("step %d, training accuracy %g"%(i, train_accuracy))
 
 
+
             # Update the events file which is used to monitor the training (in this case,
             # only the training loss is monitored)
             summary_str = sess.run(summary_op, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
             summary_writer.add_summary(summary_str, i)
             summary_writer.flush()
 
+
         # save the checkpoints every 1100 iterations
         if i % 1100 == 0 or i == max_step:
+            validation_accuracy, valid_summ = sess.run([accuracy, valid_sum],
+                                                            feed_dict={x: mnist.validation.images,
+                                                                       y_: mnist.validation.labels,
+                                                                       keep_prob: 1.0})
+            summary_writer.add_summary(valid_summ, i)
+            print("validation: step %d, accuracy %g" % (i, validation_accuracy))
+
+            test_accuracy, test_summ = sess.run([accuracy, test_sum],
+                                                feed_dict={x: mnist.test.images,
+                                                           y_: mnist.test.labels,
+                                                           keep_prob: 1.0})
+            summary_writer.add_summary(test_summ, i)
+            print("test: step %d, accuracy %g" % (i, test_accuracy))
 
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
