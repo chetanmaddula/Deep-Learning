@@ -9,7 +9,9 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 
 # Import Tensorflow and start a session
 
+
 def weight_variable(shape):
+
     '''
     Initialize weights
     :param shape: shape of weights, e.g. [w, h ,Cin, Cout] where
@@ -25,6 +27,7 @@ def weight_variable(shape):
 
     return tf.Variable(initial)
 
+
 def bias_variable(shape):
     '''
     Initialize biases
@@ -35,11 +38,19 @@ def bias_variable(shape):
 
     # IMPLEMENT YOUR BIAS_VARIABLE HERE
     initial = tf.constant(0.1,shape=shape)
-
     return tf.Variable(initial)
 
-def leaky_relu (x, alp):
-    return tf.nn.relu(x) - alp * tf.nn.relu(-x)
+#
+
+##def leaky_relu (x, alp):
+
+#    return tf.nn.relu(x) - alp * tf.nn.relu(-x)
+
+#def tanh(x):
+
+#def sigmoid:
+#def maxout:
+## initialisation xavier
 
 def conv2d(x, W):
     '''
@@ -125,25 +136,24 @@ def main():
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-    hist(x_image)
+    hist(x_image,'x_img')
 
-    hist(W_conv1)
-    hist(b_conv1)
-    hist(h_conv1)
-    hist(h_pool1)
+    hist(W_conv1,'w_conv1')
+    hist(b_conv1,'b_conv1')
+    hist(h_conv1,'h_conv1')
+    hist(h_pool1,'h_pool1')
 
-    hist(W_conv2)
-    hist(b_conv2)
-    hist(h_conv2)
-    hist(h_pool2)
+    hist(W_conv2,'w_conv2')
+    hist(b_conv2,'b_conv2')
+    hist(h_conv2,'h_conv2')
+    hist(h_pool2,'h_pool2')
 
-    hist(h_pool2_flat)
-    hist(W_fc1)
-    hist(b_fc1)
-    hist(h_fc1)
-    hist(h_pool1)
+    hist(W_fc1,'w_fc1')
+    hist(b_fc1,'b_fc1')
+    hist(h_fc1,'h_fc1')
 
-
+    #tf.summary.scalar("test accuracy", accuracy.eval(feed_dict={ x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+    #tf.summary.scalar("valid accuracy", accuracy.eval(feed_dict={ x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
 
     # Add a scalar summary for the snapshot loss.
     tf.summary.scalar(cross_entropy.op.name, cross_entropy)
@@ -171,11 +181,7 @@ def main():
             train_accuracy = accuracy.eval(feed_dict={
                 x:batch[0], y_:batch[1], keep_prob: 1.0})
             print("step %d, training accuracy %g"%(i, train_accuracy))
-            if i % 1100 == 0 or i == max_step:
-                tf.summary.scalar("test accuracy" , accuracy.eval(feed_dict={
-                    x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
-                tf.summary.scalar("valid accuracy" , accuracy.eval(feed_dict={
-                    x: mnist.validation.images, y_: mnist.validation.labels, keep_prob: 1.0}))
+
 
             # Update the events file which is used to monitor the training (in this case,
             # only the training loss is monitored)
@@ -199,13 +205,13 @@ def main():
     print('The training takes %f second to finish'%(stop_time - start_time))
 
 
-def hist(x):
-    tf.summary.histogram("1", x)
-    tf.summary.scalar('1_min', tf.reduce_min(x))
-    tf.summary.scalar('1_max', tf.reduce_max(x))
-    tf.summary.scalar('1_mean', tf.reduce_mean(x))
+def hist(x,str1):
+    tf.summary.histogram(str1, x)
+    tf.summary.scalar(str1 + 'min', tf.reduce_min(x))
+    tf.summary.scalar(str1 + 'max', tf.reduce_max(x))
+    tf.summary.scalar(str1 + 'mean', tf.reduce_mean(x))
     mean = tf.reduce_mean(x)
-    tf.summary.scalar('1_sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
+    tf.summary.scalar(str1 + 'sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
 
 
 if __name__ == "__main__":
