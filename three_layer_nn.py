@@ -1,5 +1,6 @@
 
 import matplotlib.pyplot as plt
+import math
 from sklearn import datasets
 import numpy as np
 
@@ -28,7 +29,6 @@ def plot_decision_boundary(pred_func, X, y):
     # Generate a grid of points with distance h between them
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
     # Predict the function value for the whole gid
-
     Z = pred_func(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
     # Plot the contour and training examples
@@ -149,7 +149,7 @@ class NeuralNetwork(object):
         '''
         predict infers the label of a given data point X
         :param X: input data
-        :return: label inf,30erred
+        :return: label inferred
         '''
         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
         return np.argmax(self.probs, axis=1)
