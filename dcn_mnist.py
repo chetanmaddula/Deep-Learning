@@ -74,7 +74,7 @@ def conv2d(x, W):
     k = tf.to_float(tf.greater_equal(x,0))
     k1 = tf.to_float(tf.greater_equal(W, 0))
 
-    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME'),tf.nn.conv2d(k,k1, strides=[1,1,1,1], padding='SAME'))
+    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME'),tf.to_float(tf.greater_equal(tf.nn.conv2d(k,k1, strides=[1,1,1,1], padding='SAME'),0)))
 
 def max_pool_2x2(x):
     '''
