@@ -151,21 +151,21 @@ def main():
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-    hist(x_image,'x_img')
+   # hist(x_image,'x_img')
 
-    hist(W_conv1,'w_conv1')
-    hist(b_conv1,'b_conv1')
-    hist(h_conv1,'h_conv1')
-    hist(h_pool1,'h_pool1')
+    #hist(W_conv1,'w_conv1')
+    #hist(b_conv1,'b_conv1')
+    #hist(h_conv1,'h_conv1')
+    #hist(h_pool1,'h_pool1')
 
-    hist(W_conv2,'w_conv2')
-    hist(b_conv2,'b_conv2')
-    hist(h_conv2,'h_conv2')
-    hist(h_pool2,'h_pool2')
+#    hist(W_conv2,'w_conv2')
+#    hist(b_conv2,'b_conv2')
+#    hist(h_conv2,'h_conv2')
+#    hist(h_pool2,'h_pool2')
 
-    hist(W_fc1,'w_fc1')
-    hist(b_fc1,'b_fc1')
-    hist(h_fc1,'h_fc1')
+#    hist(W_fc1,'w_fc1')
+#    hist(b_fc1,'b_fc1')
+#    hist(h_fc1,'h_fc1')
 
     valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
     test_sum = tf.summary.scalar("test accuracy",accuracy)
@@ -175,7 +175,7 @@ def main():
     summary_op = tf.summary.merge_all()
 
     # Add the variable initializer Op.
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
 
     # Create a saver for writing training checkpoints.
     saver = tf.train.Saver()
