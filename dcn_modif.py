@@ -72,11 +72,11 @@ def conv2d(x, W,b):
 
     # IMPLEMENT YOUR CONV2D HERE
 
-    k = tf.add(x,-15)
-    k1 = tf.add(W, -15)
-    b1 = tf.add(b, -15)
+    k = tf.div(x,16)
+    k1 = tf.div(W, 16)
+    b2 = tf.div(b, 16)
 
-    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b1, 0)))
+    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b2, 0)))
 
 def max_pool_2x2(x):
     '''
