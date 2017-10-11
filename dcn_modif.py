@@ -71,8 +71,7 @@ def conv2d(x, W,b):
     '''
 
     # IMPLEMENT YOUR CONV2D HERE
-    w1 = tf.bitcast(W, type=tf.int8)
-    b1 = tf.bitcast(b, type=tf.int8)
+
     k = tf.add(x,-15)
     k1 = tf.add(w1, -15)
     b1 = tf.add(b1, -15)
@@ -100,7 +99,7 @@ def main():
     # FILL IN THE CODE BELOW TO BUILD YOUR NETWORK
 
     # placeholders for input data and input labeles
-    x = tf.placeholder(tf.int8,shape= [None, 784])
+    x = tf.placeholder(tf.float32,shape= [None, 784])
 
     y_ = tf.placeholder(tf.float32,shape= [None,10])
 
