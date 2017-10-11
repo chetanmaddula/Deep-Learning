@@ -27,7 +27,7 @@ def weight_variable(shape):
    # W1 = tf.get_variable("W", shape=[784, 256],
    #                     initializer=tf.contrib.layers.xavier_initializer())
 
-    return tf.Variable(initial,dtype= tf.int8)
+    return tf.Variable(initial)
 
 
 def bias_variable(shape):
@@ -40,7 +40,7 @@ def bias_variable(shape):
 
     # IMPLEMENT YOUR BIAS_VARIABLE HERE
     initial = tf.constant(0.1,shape=shape)
-    return tf.Variable(initial, dtype= tf.int8)
+    return tf.Variable(initial)
 
 #
 
@@ -71,9 +71,11 @@ def conv2d(x, W,b):
     '''
 
     # IMPLEMENT YOUR CONV2D HERE
+    w1 = tf.bitcast(W, type=tf.int8)
+    b1 = tf.bitcast(b, type=tf.int8)
     k = tf.add(x,-15)
-    k1 = tf.add(W, -15)
-    b1 = tf.add(b, -15)
+    k1 = tf.add(w1, -15)
+    b1 = tf.add(b1, -15)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b1, 0)))
 
