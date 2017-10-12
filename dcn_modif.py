@@ -72,13 +72,13 @@ def conv2d(x, W,b):
 
     # IMPLEMENT YOUR CONV2D HERE
 
-    x1 = tf.round(tf.multiply(x,2**8))
-    w1 = tf.round(tf.multiply(W, 2 ** 8))
-    b1 = tf.round(tf.multiply(b, 2 ** 8))
+    x1 = tf.round(tf.multiply(x,2**7))
+    w1 = tf.round(tf.multiply(W, 2 **7))
+    b1 = tf.round(tf.multiply(b, 2 **7))
 
-    k = tf.div(x1,128)
-    k1 = tf.div(w1, 128)
-    b2 = tf.div(b1, 128)
+    k = tf.div(x1,256)
+    k1 = tf.div(w1, 256)
+    b2 = tf.div(b1, 256)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b2, 0)))
 
