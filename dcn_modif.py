@@ -76,9 +76,9 @@ def conv2d(x, W,b):
     w1 = tf.round(tf.multiply(W, 2 ** 8))
     b1 = tf.round(tf.multiply(b, 2 ** 8))
 
-    k = tf.div(x1,32)
-    k1 = tf.div(w1, 32)
-    b2 = tf.div(b1, 32)
+    k = tf.div(x1,128)
+    k1 = tf.div(w1, 128)
+    b2 = tf.div(b1, 128)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b2, 0)))
 
