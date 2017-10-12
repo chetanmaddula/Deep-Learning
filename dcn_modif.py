@@ -76,9 +76,9 @@ def conv2d(x, W,b):
     w1 = tf.round(tf.multiply(W, 2 ** 8))
     b1 = tf.round(tf.multiply(b, 2 ** 8))
 
-    k = tf.div(x1,16)
-    k1 = tf.div(w1, 16)
-    b2 = tf.div(b1, 16)
+    k = tf.div(x1,32)
+    k1 = tf.div(w1, 32)
+    b2 = tf.div(b1, 32)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b2, 0)))
 
@@ -158,8 +158,8 @@ def main():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 
-   # valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
-   # test_sum = tf.summary.scalar("test accuracy",accuracy)
+    valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
+    test_sum = tf.summary.scalar("test accuracy",accuracy)
     # Add a scalar summary for the snapshot loss.
     tf.summary.scalar(cross_entropy.op.name, cross_entropy)
     # Build the summary operation based on the TF collection of Summaries.
@@ -196,21 +196,21 @@ def main():
             summary_writer.flush()
 
 
-        # save the checkpoints every 1100 iterations
-      #  if i % 1100 == 0 or i == max_step:
-       #     validation_accuracy, valid_summ = sess.run([accuracy, valid_sum],
-      #                                                      feed_dict={x: mnist.validation.images,
-      #                                                                 y_: mnist.validation.labels,
-      #                                                                 keep_prob: 1.0})
-       #     summary_writer.add_summary(valid_summ, i)
-        #    print("validation: step %d, accuracy %g" % (i, validation_accuracy))
+       #  save the checkpoints every 1100 iterations
+        if i % 1100 == 0 or i == max_step:
+            validation_accuracy, valid_summ = sess.run([accuracy, valid_sum],
+                                                       feed_dict={x: mnist.validation.images,
+                                                                  y_: mnist.validation.labels,
+                                                                  keep_prob: 1.0})
+            summary_writer.add_summary(valid_summ, i)
+            print("validation: step %d, accuracy %g" % (i, validation_accuracy))
 #
- #           test_accuracy, test_summ = sess.run([accuracy, test_sum],
-  #                                              feed_dict={x: mnist.test.images,
-   #                                                        y_: mnist.test.labels,
-    #                                                       keep_prob: 1.0})
-     #       summary_writer.add_summary(test_summ, i)
-      #      print("test: step %d, accuracy %g" % (i, test_accuracy))
+            test_accuracy, test_summ = sess.run([accuracy, test_sum],
+                                                feed_dict={x: mnist.test.images,
+                                                           y_: mnist.test.labels,
+                                                           keep_prob: 1.0})
+            summary_writer.add_summary(test_summ, i)
+            print("test: step %d, accuracy %g" % (i, test_accuracy))
 
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
