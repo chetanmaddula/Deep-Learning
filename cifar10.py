@@ -83,7 +83,7 @@ def main():
     nclass = 10         # number of classes
     imsize = 28
     nchannels = 3
-    batchsize = 20
+    batchsize = 50
     nsamples = 100
 
     Train = np.zeros((n_train * nclass, imsize, imsize, nchannels))
@@ -112,7 +112,7 @@ def main():
     sess = tf.InteractiveSession()
 
     tf_data = tf.placeholder(tf.float32, shape= [None, imsize, imsize, nchannels])#tf variable for the data, remember shape is [None, width, height, numberOfChannels]
-    tf_labels = tf.placeholder(tf.int32, shape= [None, nclass])#tf variable for labels
+    tf_labels = tf.placeholder(tf.float32, shape= [None, nclass])#tf variable for labels
 
     # --------------------------------------------------
     # model
@@ -168,13 +168,13 @@ def main():
     batch_xs = np.zeros([batchsize,imsize,imsize,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
     batch_ys = np.zeros([batchsize,nclass])#setup as [batchsize, the how many classes]
 
-    for i in range(200): # try a small iteration size once it works then continue
+    for i in range(5500): # try a small iteration size once it works then continue
         perm = np.arange(nsamples)
         np.random.shuffle(perm)
         for j in range(batchsize):
             batch_xs[j,:,:,:] = Train[perm[j],:,:,:]
             batch_ys[j,:] = LTrain[perm[j],:]
-        if i%10 == 0:
+        if i%100 == 0:
             print("train accuracy %g" % accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})) #calculate train accuracy and print it
 
             summary_str = sess.run(summary_op, feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5})
