@@ -175,7 +175,8 @@ def main():
             batch_xs[j,:,:,:] = Train[perm[j],:,:,:]
             batch_ys[j,:] = LTrain[perm[j],:]
         if i%100 == 0:
-            print("train accuracy %g" % accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})) #calculate train accuracy and print it
+            train_acc = accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})
+            print("train accuracy %g"%train_acc) #calculate train accuracy and print it
 
             summary_str = sess.run(summary_op, feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5})
             summary_writer.add_summary(summary_str, i)
