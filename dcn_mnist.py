@@ -70,11 +70,8 @@ def conv2d(x, W):
     :return: a tensor of features extracted by the filters, a.k.a. the results after convolution
     '''
 
-    # IMPLEMENT YOUR CONV2D HERE
-    k = tf.to_float(tf.greater_equal(x,0))
-    k1 = tf.to_float(tf.greater_equal(W, 0))
+    return tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')
 
-    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME'),tf.to_float(tf.greater_equal(tf.nn.conv2d(k,k1, strides=[1,1,1,1], padding='SAME'),0)))
 
 def max_pool_2x2(x):
     '''
