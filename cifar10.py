@@ -95,7 +95,7 @@ def main():
     itest = -1
     for iclass in range(0, nclass):
         for isample in range(0, n_train):
-            path = '/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
+            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
             itrain += 1
@@ -168,7 +168,7 @@ def main():
     batch_xs = np.zeros([batchsize,imsize,imsize,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
     batch_ys = np.zeros([batchsize,nclass])#setup as [batchsize, the how many classes]
 
-    for i in range(22000): # try a small iteration size once it works then continue
+    for i in range(5500): # try a small iteration size once it works then continue
         perm = np.arange(nsamples)
         np.random.shuffle(perm)
         for j in range(batchsize):
