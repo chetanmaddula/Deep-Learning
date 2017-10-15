@@ -3,9 +3,9 @@ import time
 import tensorflow as tf
 from scipy import misc
 import numpy as np
-import random
-import matplotlib.pyplot as plt
-import matplotlib as mp
+#import random
+#import matplotlib.pyplot as plt
+#import matplotlib as mp
 
 
 
