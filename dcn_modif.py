@@ -54,7 +54,8 @@ def leaky_relu (x, alp=0.01):
 #def maxout:
 ## initialisation xavier
 
-def conv2d(x, W,b):
+
+def conv2d(x, W, b, sum1, shape1):
     '''
     Perform 2-D convolution
     :param x: input tensor of size [N, W, H, Cin] where
@@ -86,8 +87,11 @@ def conv2d(x, W,b):
     k = tf.div(x1,64)
     k1 = tf.div(w1, 64)
     b2 = tf.div(b1, 64)
+    mat1 = tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME') + b2, 0))
+    sum1 += tf.reduce_sum(mat1)
+    shape1 += tf.shape(mat1)
 
-    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1,1,1,1], padding='SAME')+b2, 0)))
+    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, mat1),sum1,shape1
 
 def max_pool_2x2(x):
     '''
@@ -104,6 +108,8 @@ def main():
     # Specify training parameters
     result_dir = './results/' # directory where the results from the training are saved
     max_step = 5500 # the maximum iterations. After max_step iterations, the training will stop no matter what
+    sum1 = 0
+    shape1 = 0
 
     start_time = time.time() # start timing
 
@@ -124,21 +130,20 @@ def main():
     b_conv1 = bias_variable([32])
 
     #h_conv1 = tf.sigmoid(conv2d(x_image, W_conv1) + b_conv1)
-    h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1,b_conv1))
-    h_pool1 = max_pool_2x2(h_conv1)
+    h_conv1, sum1, shape1 = conv2d(x_image, W_conv1,b_conv1,sum1,shape1)
+    h_act1 = tf.nn.relu(h_conv1)
+    h_pool1 = max_pool_2x2(h_act1)
 
     # second convolutional layer
     #W_conv2 = tf.get_variable("W_conv2", shape=[5,5,32,64],
        #                       initializer=tf.contrib.layers.xavier_initializer())
     W_conv2 = weight_variable([5,5,32,64])
     b_conv2 = bias_variable([64])
-    h_conv2 = tf.nn.relu(conv2d(h_pool1,W_conv2,b_conv2))
-    #h_conv2 = tf.sigmoid(conv2d(h_pool1, W_conv2) + b_conv2)
-    h_pool2 = max_pool_2x2(h_conv2)
-
+    h_conv2, sum1, shape1 = conv2d(h_pool1, W_conv2, b_conv2, sum1, shape1)
+    h_act2 = tf.nn.relu(h_conv2)
+    h_pool2 = max_pool_2x2(h_act2)
     # densely connected layer
-    #W_fc1 = tf.get_variable("W_fc1", shape=[7 * 7 * 64, 1024],
-        #                      initializer=tf.contrib.layers.xavier_initializer())
+
     W_fc1 = weight_variable([7 * 7 * 64, 1024])
     b_fc1 = bias_variable([1024])
     h_pool2_flat = tf.reshape(h_pool2,[-1, 7*7*64])
@@ -164,7 +169,9 @@ def main():
     correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-
+    hist(W_conv1, 'w_conv1')
+    hist(b_conv1,'b_conv1')
+    hist(h_conv1, 'h_conv1')
     valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
     test_sum = tf.summary.scalar("test accuracy",accuracy)
     # Add a scalar summary for the snapshot loss.
@@ -193,11 +200,6 @@ def main():
             train_accuracy = accuracy.eval(feed_dict={
                 x:batch[0], y_:batch[1], keep_prob: 1.0})
             print("step %d, training accuracy %g"%(i, train_accuracy))
-            cross_entro = cross_entropy.eval(feed_dict={x: batch[0],
-                                                        y_: batch[1], keep_prob: 1.0})
-            print("step %d, cross entropy %g" % (i, cross_entro))
-
-
 
             # Update the events file which is used to monitor the training (in this case,
             # only the training loss is monitored)
@@ -229,6 +231,8 @@ def main():
     # print test error
     print("test accuracy %g"%accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+    print(sum1)
+    print(shape1)
 
     stop_time = time.time()
     print('The training takes %f second to finish'%(stop_time - start_time))
