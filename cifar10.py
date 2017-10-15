@@ -21,7 +21,7 @@ def weight_variable(shape):
     '''
 
     # IMPLEMENT YOUR WEIGHT_VARIABLE HERE
-    initial = tf.truncated_normal(shape, stddev=0.1)
+    initial = tf.truncated_normal(shape, stddev=0.05)
 
     return tf.Variable(initial)
 
@@ -35,7 +35,7 @@ def bias_variable(shape):
     '''
 
     # IMPLEMENT YOUR BIAS_VARIABLE HERE
-    initial = tf.constant(0.1, shape=shape)
+    initial = tf.constant(0.0, shape=shape)
 
     return tf.Variable(initial)
 
@@ -82,7 +82,7 @@ def main():
     n_test = 100        # per class
     nclass = 10         # number of classes
     imsize = 28
-    nchannels = 3
+    nchannels = 1
     batchsize = 50
     nsamples = 100
 
@@ -102,7 +102,7 @@ def main():
             Train[itrain,:,:,0] = im
             LTrain[itrain,iclass] = 1 # 1-hot lable
         for isample in range(0, n_test):
-            path = '/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass,isample)
+            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
             itest += 1
@@ -117,27 +117,36 @@ def main():
     # --------------------------------------------------
     # model
     #create your model
-    w_conv1 = weight_variable([5,5,3,32])
+    #w_conv1 = weight_variable([5,5,1,32])
+    w_conv1 = tf.get_variable("W1", shape=[5,5,1,32],
+                    initializer=tf.contrib.layers.xavier_initializer())
     b_conv1 = bias_variable([32])
 
     h_conv1 = tf.nn.relu(conv2d(tf_data,w_conv1) + b_conv1)
     h_pool1 = max_pool_2x2(h_conv1)
 
-    w_conv2 = weight_variable([5,5,32,64])
+    #w_conv2 = weight_variable([5,5,32,64])
+    w_conv2 = tf.get_variable("W2", shape=[5, 5, 32, 64],
+                              initializer=tf.contrib.layers.xavier_initializer())
     b_conv2 = bias_variable([64])
 
     h_conv2 = tf.nn.relu(conv2d(h_pool1, w_conv2) + b_conv2)
     h_pool2 = max_pool_2x2(h_conv2)
     h_pool2_flat = tf.reshape(h_pool2,[-1, 7*7*64])
 
-    W_fc1 = weight_variable([7*7*64, 1024])
+    #W_fc1 = weight_variable([7*7*64, 1024])
+    W_fc1 = tf.get_variable("Wfc1", shape=[7*7*64, 1024],
+                              initializer=tf.contrib.layers.xavier_initializer())
     b_fc1 = bias_variable([1024])
     h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
     keep_prob = tf.placeholder(tf.float32)
     h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
-    W_fc2 = weight_variable([1024, 10])
+    #W_fc2 = weight_variable([1024, 10])
+    W_fc2 = tf.get_variable("Wfc2", shape=[1024,10],
+                            initializer=tf.contrib.layers.xavier_initializer())
+
     b_fc2 = bias_variable([10])
     h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
@@ -145,7 +154,7 @@ def main():
     # loss
     #set up the loss, optimization, evaluation, and accuracy
     cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf_labels, logits=h_fc2))
-    optimizer = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+    optimizer = tf.train.AdamOptimizer(1e-6).minimize(cross_entropy)
     correct_prediction = tf.equal(tf.argmax(h_fc2, 1), tf.argmax(tf_labels, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -177,11 +186,16 @@ def main():
         if i%100 == 0:
             train_acc = accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})
             print("train accuracy %g"%train_acc) #calculate train accuracy and print it
+            cross_entro = cross_entropy.eval(feed_dict={tf_data: batch_xs,
+                                                        tf_labels: batch_ys, keep_prob: 1.0})
+            print("step %d, cross entropy %g" % (i, cross_entro))
 
             summary_str = sess.run(summary_op, feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5})
             summary_writer.add_summary(summary_str, i)
             summary_writer.flush()
-        optimizer.run(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5}) # dropout only during training
+        optimizer.run(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5})
+
+        # dropout only during training
 
     # --------------------------------------------------
     # test

@@ -68,6 +68,15 @@ def conv2d(x, W):
 
     return tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')
 
+def hist(x,str1):
+    tf.summary.histogram(str1, x)
+    tf.summary.scalar(str1 + 'min', tf.reduce_min(x))
+    tf.summary.scalar(str1 + 'max', tf.reduce_max(x))
+    tf.summary.scalar(str1 + 'mean', tf.reduce_mean(x))
+    mean = tf.reduce_mean(x)
+    tf.summary.scalar(str1 + 'sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
+
+
 def max_pool_2x2(x):
     '''
     Perform non-overlapping 2-D maxpooling on 2x2 regions in the input data
@@ -163,20 +172,20 @@ y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
 # setup training
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits= y_conv))
-train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+train_step = tf.train.AdamOptimizer(1e-6).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.to_float(correct_prediction))
 
 # hist(x_image,'x_img')
 
-#hist(W_conv1,'w_conv1')
+hist(W_conv1,'w_conv1')
 #hist(b_conv1,'b_conv1')
-#hist(h_conv1,'h_conv1')
+hist(h_conv1,'h_conv1')
 #hist(h_pool1,'h_pool1')
 
-#    hist(W_conv2,'w_conv2')
+hist(W_conv2,'w_conv2')
 #    hist(b_conv2,'b_conv2')
-#    hist(h_conv2,'h_conv2')
+hist(h_conv2,'h_conv2')
 #    hist(h_pool2,'h_pool2')
 
 #    hist(W_fc1,'w_fc1')
@@ -206,7 +215,7 @@ batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many cl
 
 # run the training
 perm = np.arange(nsamples)
-for i in range(22000):
+for i in range(3300):
 
     np.random.shuffle(perm)
     for j in range(batchsize):
@@ -227,7 +236,9 @@ for i in range(22000):
         summary_str = sess.run(summary_op, feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
         summary_writer.add_summary(summary_str, i)
         summary_writer.flush()
-
+    cross_entro = cross_entropy.eval(feed_dict={x: batch_xs,
+                                              y_: batch_ys, keep_prob: 1.0})
+    print("step %d, cross entropy %g" % (i, cross_entro))
 
     # save the checkpoints every 1100 iterations
     if i % 1100 == 0 or i == max_step:
@@ -249,13 +260,5 @@ print("test accuracy %g"%accuracy.eval(feed_dict={x: Test,
 stop_time = time.time()
 print('The training takes %f second to finish'%(stop_time - start_time))
 
-
-def hist(x,str1):
-    tf.summary.histogram(str1, x)
-    tf.summary.scalar(str1 + 'min', tf.reduce_min(x))
-    tf.summary.scalar(str1 + 'max', tf.reduce_max(x))
-    tf.summary.scalar(str1 + 'mean', tf.reduce_mean(x))
-    mean = tf.reduce_mean(x)
-    tf.summary.scalar(str1 + 'sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
 
 

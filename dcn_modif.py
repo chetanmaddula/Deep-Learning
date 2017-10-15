@@ -186,6 +186,9 @@ def main():
             train_accuracy = accuracy.eval(feed_dict={
                 x:batch[0], y_:batch[1], keep_prob: 1.0})
             print("step %d, training accuracy %g"%(i, train_accuracy))
+            cross_entro = cross_entropy.eval(feed_dict={x: batch[0],
+                                                        y_: batch[1], keep_prob: 1.0})
+            print("step %d, cross entropy %g" % (i, cross_entro))
 
 
 
@@ -198,23 +201,22 @@ def main():
 
        #  save the checkpoints every 1100 iterations
         if i % 1100 == 0 or i == max_step:
-            validation_accuracy, valid_summ = sess.run([accuracy, valid_sum],
-                                                       feed_dict={x: mnist.validation.images,
-                                                                  y_: mnist.validation.labels,
-                                                                  keep_prob: 1.0})
-            summary_writer.add_summary(valid_summ, i)
-            print("validation: step %d, accuracy %g" % (i, validation_accuracy))
-#
-            test_accuracy, test_summ = sess.run([accuracy, test_sum],
-                                                feed_dict={x: mnist.test.images,
-                                                           y_: mnist.test.labels,
-                                                           keep_prob: 1.0})
-            summary_writer.add_summary(test_summ, i)
-            print("test: step %d, accuracy %g" % (i, test_accuracy))
+        #     validation_accuracy, valid_summ = sess.run([accuracy, valid_sum],
+        #                                                feed_dict={x: mnist.validation.images,
+        #                                                           y_: mnist.validation.labels,
+        #                                                           keep_prob: 1.0})
+        #     summary_writer.add_summary(valid_summ, i)
+        #     print("validation: step %d, accuracy %g" % (i, validation_accuracy))
+
+            # test_accuracy, test_summ = sess.run([accuracy, test_sum],
+            #                                     feed_dict={x: mnist.test.images,
+            #                                                y_: mnist.test.labels,
+            #                                                keep_prob: 1.0})
+            # summary_writer.add_summary(test_summ, i)
+            # print("test: step %d, accuracy %g" % (i, test_accuracy))
 
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
-
         train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5}) # run one train_step
 
     # print test error
