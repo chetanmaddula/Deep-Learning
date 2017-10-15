@@ -168,7 +168,7 @@ def main():
     batch_xs = np.zeros([batchsize,imsize,imsize,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
     batch_ys = np.zeros([batchsize,nclass])#setup as [batchsize, the how many classes]
 
-    for i in range(5500): # try a small iteration size once it works then continue
+    for i in range(22000): # try a small iteration size once it works then continue
         perm = np.arange(nsamples)
         np.random.shuffle(perm)
         for j in range(batchsize):
