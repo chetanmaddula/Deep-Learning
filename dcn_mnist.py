@@ -203,8 +203,9 @@ batch_xs = np.zeros([batchsize, imsize, imsize, nchannels])  # setup as [batchsi
 batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many classes]
 
 # run the training
+perm = np.arange(nsamples)
 for i in range(200):
-    perm = np.arange(nsamples)
+
     np.random.shuffle(perm)
     for j in range(batchsize):
         batch_xs[j, :, :, :] = Train[perm[j], :, :, :]
@@ -250,5 +251,3 @@ def hist(x,str1):
     tf.summary.scalar(str1 + 'sd',tf.sqrt(tf.reduce_mean(tf.square(x - mean))))
 
 
-if __name__ == "__main__":
-    main()

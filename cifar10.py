@@ -95,14 +95,14 @@ def main():
     itest = -1
     for iclass in range(0, nclass):
         for isample in range(0, n_train):
-            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
+            path = '/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
             itrain += 1
             Train[itrain,:,:,0] = im
             LTrain[itrain,iclass] = 1 # 1-hot lable
         for isample in range(0, n_test):
-            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass,isample)
+            path = '/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
             itest += 1
