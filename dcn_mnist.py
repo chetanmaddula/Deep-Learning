@@ -206,7 +206,7 @@ batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many cl
 
 # run the training
 perm = np.arange(nsamples)
-for i in range(200):
+for i in range(22000):
 
     np.random.shuffle(perm)
     for j in range(batchsize):
@@ -231,6 +231,12 @@ for i in range(200):
 
     # save the checkpoints every 1100 iterations
     if i % 1100 == 0 or i == max_step:
+        test_accuracy, test_summ = sess.run([accuracy, test_sum],
+                                            feed_dict={x: Test,
+                                                       y_: LTest,
+                                                       keep_prob: 1.0})
+        summary_writer.add_summary(test_summ, i)
+        print("test: step %d, accuracy %g" % (i, test_accuracy))
         checkpoint_file = os.path.join(result_dir, 'checkpoint')
         saver.save(sess, checkpoint_file, global_step=i)
 
