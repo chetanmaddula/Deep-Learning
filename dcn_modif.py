@@ -108,8 +108,8 @@ def main():
     # Specify training parameters
     result_dir = './results/' # directory where the results from the training are saved
     max_step = 3300 # the maximum iterations. After max_step iterations, the training will stop no matter what
-    sum1 = tf.constant(0,dtype= tf.float32)
-    shape1 = tf.constant(0, dtype=tf.int32)
+    sum1 = tf.Variable(0,dtype= tf.float32)
+    shape1 = tf.Variable(0, dtype=tf.int32)
 
     start_time = time.time() # start timing
 
