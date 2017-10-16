@@ -102,7 +102,7 @@ nchannels = 1
 batchsize = 50
 nsamples = 100
 
-Train = np.zeros((n_train * nclass, imsize, imsize, nchannels))
+Train = np.zeros((n_train * nclass*2, imsize, imsize, nchannels))
 Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
 LTrain = np.zeros((n_train * nclass, nclass))
 LTest = np.zeros((n_test * nclass, nclass))
@@ -114,10 +114,19 @@ for iclass in range(0, nclass):
         path = '~/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
         im = misc.imread(path);  # 28 by 28
+        im1 = np.fliplr(im)
+
+        # 28 by 28
         im = im.astype(float) / 255
+        im1 = im1.astype(float) / 255
+        ran1 = np.random.randint(2)
+
         itrain += 1
-        Train[itrain, :, :, 0] = im
-        LTrain[itrain, iclass] = 1  # 1-hot lable
+        if ran1 == 0:
+            Train[itrain, :, :, 0] = im
+        else:
+            Train[itrain, :, :, 0] = im1
+        LTrain[itrain, iclass] = 1
     for isample in range(0, n_test):
         path = '~/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)

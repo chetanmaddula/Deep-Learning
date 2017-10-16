@@ -96,11 +96,22 @@ def main():
     for iclass in range(0, nclass):
         for isample in range(0, n_train):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
-            im = misc.imread(path); # 28 by 28
-            im = im.astype(float)/255
+            im = misc.imread(path);  # 28 by 28
+            im1 = np.fliplr(im)
+
+            # 28 by 28
+            im = im.astype(float) / 255
+            im1 = im1.astype(float) / 255
+            ran1 = np.random.randint(2)
+
+
             itrain += 1
-            Train[itrain,:,:,0] = im
-            LTrain[itrain,iclass] = 1 # 1-hot lable
+            if ran1 == 0:
+                Train[itrain, :, :, 0] = im
+            else:
+                Train[itrain, :, :, 0] = im1
+            LTrain[itrain, iclass] = 1
+              # 1-hot lable
         for isample in range(0, n_test):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
@@ -177,7 +188,7 @@ def main():
     batch_xs = np.zeros([batchsize,imsize,imsize,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
     batch_ys = np.zeros([batchsize,nclass])#setup as [batchsize, the how many classes]
 
-    for i in range(5500): # try a small iteration size once it works then continue
+    for i in range(200): # try a small iteration size once it works then continue
         perm = np.arange(nsamples)
         np.random.shuffle(perm)
         for j in range(batchsize):
