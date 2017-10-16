@@ -88,7 +88,7 @@ def conv2d(x, W, b, sum1, shape1):
     k1 = tf.div(w1, 64)
     b2 = tf.div(b1, 64)
     mat1 = tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME') + b2, 0))
-    sum1 = tf.add(tf.reduce_sum(mat1),sum1)
+    sum1 = tf.add(tf.count_nonzero(mat1),sum1)
     shape1 = tf.add(tf.shape(mat1),shape1)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, mat1),sum1,shape1
@@ -170,8 +170,7 @@ def main():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     hist(W_conv1, 'w_conv1')
-    hist(sum1,'sum1')
-    hist(tf.to_float(shape1),'shape')
+
     hist(b_conv1,'b_conv1')
     hist(h_conv1, 'h_conv1')
     valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
@@ -225,10 +224,7 @@ def main():
             #                                                keep_prob: 1.0})
             # summary_writer.add_summary(test_summ, i)
             # print("test: step %d, accuracy %g" % (i, test_accuracy))
-            print("sum %g" % sum1.eval(feed_dict={x: mnist.test.images,
-                                                  y_: mnist.test.labels, keep_prob: 1.0}))
-            print("shape %g" % shape1.eval(feed_dict={x: mnist.test.images,
-                                                      y_: mnist.test.labels, keep_prob: 1.0}))
+
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
         train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5}) # run one train_step
@@ -237,8 +233,11 @@ def main():
     print("test accuracy %g"%accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 
-    print(sum1)
-    print(shape1)
+    print("test sum %g" % sum1.eval(feed_dict={
+        x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+
+    print("test shape %g" % shape1.eval(feed_dict={
+        x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 
     stop_time = time.time()
     print('The training takes %f second to finish'%(stop_time - start_time))
