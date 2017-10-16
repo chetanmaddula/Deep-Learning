@@ -4,6 +4,7 @@ import tensorflow as tf
 import random
 import matplotlib.pyplot as plt
 import matplotlib as mp
+from skimage import color
 
 
 # --------------------------------------------------
@@ -75,6 +76,14 @@ def max_pool_2x2(x):
     return h_max
 
 
+def colorize(image1, hue, saturation = 1):
+    hsv = color.rgb2hsv(image1)
+    hsv[:,:,1] = saturation
+    hsv[:,:,0] = hue
+    rgb1 = color.hsv2rgb(hsv)
+    return rgb1
+
+
 def main():
 
     result_dir = './results/'
@@ -82,9 +91,9 @@ def main():
     n_test = 100        # per class
     nclass = 10         # number of classes
     imsize = 28
-    nchannels = 1
-    batchsize = 50
-    nsamples = 100
+    nchannels = 3
+    batchsize = 80
+    nsamples = 1000
 
     Train = np.zeros((n_train * nclass, imsize, imsize, nchannels))
     Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
@@ -97,27 +106,35 @@ def main():
         for isample in range(0, n_train):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path);  # 28 by 28
-            im1 = np.fliplr(im)
+            im = color.gray2rgb(im)
+            ran2 = np.random.randint(6)
+            im1 = colorize(im, ran2, saturation=0.3)
+            ran3 = np.random.randint(2)
 
             # 28 by 28
             im = im.astype(float) / 255
             im1 = im1.astype(float) / 255
             ran1 = np.random.randint(2)
 
-
             itrain += 1
             if ran1 == 0:
-                Train[itrain, :, :, 0] = im
+                if ran3 == 0:
+                    Train[itrain, :, :] = im
+                else:
+                    Train[itrain, :, :] = np.fliplr(im)
             else:
-                Train[itrain, :, :, 0] = im1
-            LTrain[itrain, iclass] = 1
-              # 1-hot lable
+                if ran3 == 0:
+                    Train[itrain, :, :] = im1
+                else:
+                    Train[itrain, :, :] = np.fliplr(im1)
+            LTrain[itrain, iclass] = 1  # 1-hot lable
         for isample in range(0, n_test):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
+            im = color.gray2rgb(im)
             itest += 1
-            Test[itest,:,:,0] = im
+            Test[itest,:,:] = im
             LTest[itest,iclass] = 1 # 1-hot lable
 
     sess = tf.InteractiveSession()
@@ -129,7 +146,7 @@ def main():
     # model
     #create your model
     #w_conv1 = weight_variable([5,5,1,32])
-    w_conv1 = tf.get_variable("W1", shape=[5,5,1,32],
+    w_conv1 = tf.get_variable("W1", shape=[5,5,3,32],
                     initializer=tf.contrib.layers.xavier_initializer())
     b_conv1 = bias_variable([32])
 

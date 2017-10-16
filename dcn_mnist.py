@@ -6,6 +6,7 @@ import numpy as np
 #import random
 #import matplotlib.pyplot as plt
 #import matplotlib as mp
+from skimage import color
 
 
 
@@ -89,6 +90,15 @@ def max_pool_2x2(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides= [1, 2, 2, 1], padding= 'SAME')
 
 
+def colorize(image1, hue, saturation = 1):
+    hsv = color.rgb2hsv(image1)
+    hsv[:,:,1] = saturation
+    hsv[:,:,0] = hue
+    rgb1 = color.hsv2rgb(hsv)
+    return rgb1
+
+
+
 # Specify training parameters
 result_dir = './results/' # directory where the results from the training are saved
 max_step = 5500 # the maximum iterations. After max_step iterations, the training will stop no matter what
@@ -98,9 +108,9 @@ n_train = 1000  # per class
 n_test = 100  # per class
 nclass = 10  # number of classes
 imsize = 28
-nchannels = 1
+nchannels = 3
 batchsize = 50
-nsamples = 100
+nsamples = 1000
 
 Train = np.zeros((n_train * nclass*2, imsize, imsize, nchannels))
 Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
@@ -114,7 +124,11 @@ for iclass in range(0, nclass):
         path = '~/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
         im = misc.imread(path);  # 28 by 28
-        im1 = np.fliplr(im)
+        im = color.gray2rgb(im)
+        ran2 = np.random.randint(6)
+        im1 = colorize(im, ran2, saturation= 0.3 )
+        ran3 = np.random.randint(2)
+
 
         # 28 by 28
         im = im.astype(float) / 255
@@ -123,17 +137,24 @@ for iclass in range(0, nclass):
 
         itrain += 1
         if ran1 == 0:
-            Train[itrain, :, :, 0] = im
+            if ran3 == 0:
+                Train[itrain, :, :] = im
+            else:
+                Train[itrain, :, :] = np.fliplr(im)
         else:
-            Train[itrain, :, :, 0] = im1
+            if ran3 == 0:
+                Train[itrain, :, :] = im1
+            else:
+                Train[itrain, :, :] = np.fliplr(im1)
         LTrain[itrain, iclass] = 1
     for isample in range(0, n_test):
         path = '~/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
-        im = misc.imread(path);  # 28 by 28
+        im = misc.imread(path);
+        im = color.gray2rgb(im)# 28 by 28
         im = im.astype(float) / 255
         itest += 1
-        Test[itest, :, :, 0] = im
+        Test[itest, :, :] = im
         LTest[itest, iclass] = 1  # 1-hot lable
 
 # FILL IN THE CODE BELOW TO BUILD YOUR NETWORK
@@ -146,7 +167,9 @@ y_ = tf.placeholder(tf.float32, shape=[None,10])
 
 
 # first convolutional layer
-W_conv1 = weight_variable([5, 5, 1, 32])
+
+
+W_conv1 = weight_variable([5, 5, 3, 32])
 b_conv1 = bias_variable([32])
 h_conv1 = tf.nn.relu(conv2d(x, W_conv1) + b_conv1)
 
@@ -245,9 +268,9 @@ for i in range(3300):
         summary_str = sess.run(summary_op, feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
         summary_writer.add_summary(summary_str, i)
         summary_writer.flush()
-    cross_entro = cross_entropy.eval(feed_dict={x: batch_xs,
-                                              y_: batch_ys, keep_prob: 1.0})
-    print("step %d, cross entropy %g" % (i, cross_entro))
+        cross_entro = cross_entropy.eval(feed_dict={x: batch_xs,
+                                                    y_: batch_ys, keep_prob: 1.0})
+        print("step %d, cross entropy %g" % (i, cross_entro))
 
     # save the checkpoints every 1100 iterations
     if i % 1100 == 0 or i == max_step:
