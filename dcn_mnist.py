@@ -124,14 +124,15 @@ for iclass in range(0, nclass):
         path = '~/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
         im = misc.imread(path);  # 28 by 28
+        if random.randint(0,1):
+            im = np.invert(im)
+            im1 = np.invert(im1)
+
         im = color.gray2rgb(im)
         ran2 = np.random.randint(6)
         im1 = colorize(im, ran2, saturation= 0.3 )
         ran3 = np.random.randint(2)
 
-        if random.randint(0,1):
-            im = np.invert(im)
-            im1 = np.invert(im1)
 
 
         # 28 by 28
