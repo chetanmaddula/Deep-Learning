@@ -73,16 +73,11 @@ def conv2d(x, W, b, sum1, shape1):
 
     # IMPLEMENT YOUR CONV2D HERE
     xmax = tf.reduce_max(x)
-    x1 = tf.div(x, xmax)
-    x1 = tf.multiply(tf.minimum(tf.div(tf.round(tf.multiply(x1,2**7)),2**7),1-1/2**7),xmax)
 
-    wmax = tf.reduce_max(W)
-    w1 = tf.div(W, wmax)
-    w1 = tf.multiply(tf.minimum(tf.div(tf.round(tf.multiply(w1, 2 ** 7)), 2 ** 7), 1 - 1 / 2 ** 7), wmax)
+    x1 = tf.round(tf.multiply(x, 2**7))
 
-    bmax = tf.reduce_max(b)
-    b1 = tf.div(b, bmax)
-    b1 = tf.multiply(tf.minimum(tf.div(tf.round(tf.multiply(b1, 2 ** 7)), 2 ** 7), 1 - 1 / 2 ** 7), bmax)
+    w1 = tf.round(tf.multiply(W, 2 ** 7))
+    b1 = tf.round(tf.multiply(b, 2**7))
 
     k = tf.div(x1,64)
     k1 = tf.div(w1, 64)
