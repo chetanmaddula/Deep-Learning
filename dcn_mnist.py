@@ -109,8 +109,8 @@ n_test = 100  # per class
 nclass = 10  # number of classes
 imsize = 28
 nchannels = 3
-batchsize = 50
-nsamples = 1000
+batchsize = 100
+nsamples = 10000
 
 Train = np.zeros((n_train * nclass*2, imsize, imsize, nchannels))
 Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
