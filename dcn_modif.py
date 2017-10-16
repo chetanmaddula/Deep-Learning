@@ -55,7 +55,7 @@ def leaky_relu (x, alp=0.01):
 ## initialisation xavier
 
 
-def conv2d(x, W, b, sum1, shape1):
+def conv2d(x, W, b):
     '''
     Perform 2-D convolution
     :param x: input tensor of size [N, W, H, Cin] where
@@ -88,9 +88,8 @@ def conv2d(x, W, b, sum1, shape1):
     k1 = tf.div(w1, 64)
     b2 = tf.div(b1, 64)
     mat1 = tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME') + b2, 0))
-    sum1 = tf.add(tf.count_nonzero(mat1),sum1)
-    shape1 = tf.add(tf.shape(mat1),shape1)
-
+    sum1 = tf.count_nonzero(mat1)
+    shape1 = tf.shape(mat1)
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, mat1),sum1,shape1
 
 def max_pool_2x2(x):
@@ -130,7 +129,7 @@ def main():
     b_conv1 = bias_variable([32])
 
     #h_conv1 = tf.sigmoid(conv2d(x_image, W_conv1) + b_conv1)
-    h_conv1, sum1, shape1 = conv2d(x_image, W_conv1,b_conv1,sum1,shape1)
+    h_conv1, sum1, shape1 = conv2d(x_image, W_conv1,b_conv1)
     h_act1 = tf.nn.relu(h_conv1)
     h_pool1 = max_pool_2x2(h_act1)
 
@@ -139,7 +138,7 @@ def main():
        #                       initializer=tf.contrib.layers.xavier_initializer())
     W_conv2 = weight_variable([5,5,32,64])
     b_conv2 = bias_variable([64])
-    h_conv2, sum1, shape1 = conv2d(h_pool1, W_conv2, b_conv2, sum1, shape1)
+    h_conv2, sum1, shape1 = conv2d(h_pool1, W_conv2, b_conv2)
     h_act2 = tf.nn.relu(h_conv2)
     h_pool2 = max_pool_2x2(h_act2)
     # densely connected layer
