@@ -76,12 +76,12 @@ def conv2d(x, W, b, sum1, shape1):
 
     x1 = tf.round(tf.multiply(x, 2**7))
 
-    w1 = tf.round(tf.multiply(W, 2 ** 7))
-    b1 = tf.round(tf.multiply(b, 2**7))
+    w1 = tf.round(tf.multiply(W, 2 ** 8))
+    b1 = tf.round(tf.multiply(b, 2**8))
 
-    k = tf.div(x1,64)
-    k1 = tf.div(w1, 64)
-    b2 = tf.div(b1, 64)
+    k = tf.div(x1,128)
+    k1 = tf.div(w1, 128)
+    b2 = tf.div(b1, 128)
     mat1 = tf.greater(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME')+b2, 0)
     sum1 = tf.add(tf.count_nonzero(mat1),sum1)
     shape1 = tf.add(tf.size(mat1),shape1)
