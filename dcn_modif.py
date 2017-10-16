@@ -87,7 +87,7 @@ def conv2d(x, W, b, sum1, shape1):
     k = tf.div(x1,64)
     k1 = tf.div(w1, 64)
     b2 = tf.div(b1, 64)
-    mat1 = tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME'), 0)+b2)
+    mat1 = tf.to_float(tf.greater(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME')+b2, 0))
     sum1 = tf.add(tf.count_nonzero(mat1),sum1)
     shape1 = tf.add(tf.size(mat1),shape1)
 
