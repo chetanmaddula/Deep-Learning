@@ -126,7 +126,7 @@ for iclass in range(0, nclass):
         im = misc.imread(path);  # 28 by 28
         if random.randint(0,1):
             im = np.invert(im)
-            im1 = np.invert(im1)
+
 
         im = color.gray2rgb(im)
         ran2 = np.random.randint(6)
