@@ -3,7 +3,7 @@ import time
 import tensorflow as tf
 from scipy import misc
 import numpy as np
-#import random
+import random
 #import matplotlib.pyplot as plt
 #import matplotlib as mp
 from skimage import color
@@ -112,7 +112,7 @@ nchannels = 3
 batchsize = 100
 nsamples = 10000
 
-Train = np.zeros((n_train * nclass*2, imsize, imsize, nchannels))
+Train = np.zeros((n_train * nclass, imsize, imsize, nchannels))
 Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
 LTrain = np.zeros((n_train * nclass, nclass))
 LTest = np.zeros((n_test * nclass, nclass))
@@ -128,6 +128,10 @@ for iclass in range(0, nclass):
         ran2 = np.random.randint(6)
         im1 = colorize(im, ran2, saturation= 0.3 )
         ran3 = np.random.randint(2)
+
+        if random.randint(0,1):
+            im = np.invert(im)
+            im1 = np.invert(im1)
 
 
         # 28 by 28
