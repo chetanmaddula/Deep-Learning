@@ -88,8 +88,8 @@ def conv2d(x, W, b, sum1, shape1):
     k1 = tf.div(w1, 64)
     b2 = tf.div(b1, 64)
     mat1 = tf.to_float(tf.greater_equal(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME') + b2, 0))
-    sum1 += tf.reduce_sum(mat1)
-    shape1 += tf.shape(mat1)
+    sum1 = tf.add(tf.reduce_sum(mat1),sum1)
+    shape1 = tf.add(tf.shape(mat1),shape1)
 
     return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, mat1),sum1,shape1
 
@@ -107,9 +107,9 @@ def max_pool_2x2(x):
 def main():
     # Specify training parameters
     result_dir = './results/' # directory where the results from the training are saved
-    max_step = 5500 # the maximum iterations. After max_step iterations, the training will stop no matter what
-    sum1 = 0
-    shape1 = 0
+    max_step = 3300 # the maximum iterations. After max_step iterations, the training will stop no matter what
+    sum1 = tf.constant(0)
+    shape1 = tf.constant(0)
 
     start_time = time.time() # start timing
 
@@ -170,6 +170,8 @@ def main():
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
     hist(W_conv1, 'w_conv1')
+    hist(sum1,'sum1')
+    hist(shape1,'shape')
     hist(b_conv1,'b_conv1')
     hist(h_conv1, 'h_conv1')
     valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
