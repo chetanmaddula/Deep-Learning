@@ -225,7 +225,10 @@ def main():
             #                                                keep_prob: 1.0})
             # summary_writer.add_summary(test_summ, i)
             # print("test: step %d, accuracy %g" % (i, test_accuracy))
-
+            print("sum %g" % sum1.eval(feed_dict={x: mnist.test.images,
+                                                  y_: mnist.test.labels, keep_prob: 1.0}))
+            print("shape %g" % shape1.eval(feed_dict={x: mnist.test.images,
+                                                      y_: mnist.test.labels, keep_prob: 1.0}))
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=i)
         train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5}) # run one train_step
@@ -233,6 +236,7 @@ def main():
     # print test error
     print("test accuracy %g"%accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
+
     print(sum1)
     print(shape1)
 
