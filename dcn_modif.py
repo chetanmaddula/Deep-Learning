@@ -108,8 +108,8 @@ def main():
     # Specify training parameters
     result_dir = './results/' # directory where the results from the training are saved
     max_step = 3300 # the maximum iterations. After max_step iterations, the training will stop no matter what
-    sum1 = tf.constant(0)
-    shape1 = tf.constant(0)
+    sum1 = tf.constant(0,dtype= tf.float32)
+    shape1 = tf.constant(0, dtype=tf.int32)
 
     start_time = time.time() # start timing
 
@@ -171,7 +171,7 @@ def main():
 
     hist(W_conv1, 'w_conv1')
     hist(sum1,'sum1')
-    hist(shape1,'shape')
+    hist(tf.to_float(shape1),'shape')
     hist(b_conv1,'b_conv1')
     hist(h_conv1, 'h_conv1')
     valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
