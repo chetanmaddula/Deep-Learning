@@ -28,10 +28,7 @@ biases = {
 }
 
 def RNN(x, weights, biases):
-	x = tf.transpose(x, [1,0,2])
-	x = tf.reshape(x, [-1, nInput])
-	x = tf.split(0, nSteps, x) #configuring so you can get it as needed for the 28 pixels
-
+	x =tf.unstack(x, nSteps, 1)
 	lstmCell = rnn_cell.BasicRNNCell(nHidden)#find which lstm to use in the documentation
 
 	outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
@@ -46,7 +43,7 @@ pred1 = tf.nn.softmax(pred)
 #create the cost, optimization, evaluation, and accuracy
 #for the cost softmax_cross_entropy_with_logits seems really good
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred,labels=y))
-optimizer = tf.train.GradientDescentOptimizer(learning_rate= learningRate)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate= learningRate).minimize(cost)
 
 correctPred = tf.equal(tf.argmax(pred1, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
@@ -57,19 +54,19 @@ with tf.Session() as sess:
     sess.run(init)
     step = 1
 
-    while step* batchSize < trainingIters:
+    while step in range(1, trainingIters+ 1):
         batchX, batchY = mnist.train.next_batch(batchSize)
         batchX = batchX.reshape((batchSize, nSteps, nInput))
 
-        sess.run(optimizer, feed_dict= {x: batchX, y: batchY})
+        sess.run(optimizer, feed_dict={x: batchX, y: batchY})
 
         if step % displayStep == 0:
             acc = sess.run(cost, feed_dict= {x: batchX, y:batchY})
             loss = sess.run(accuracy, feed_dict= {x: batchX, y:batchY})
-            print("Iter" + str(step*batchSize) + ". Minibatch Loss= "+ \
+            print("Iter" + str(step) + ". Minibatch Loss= "+ \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-        step += 1
+
     print('Optimisation finished')
 
     testData = mnist.test.images.reshape((-1,nSteps,nInput))
