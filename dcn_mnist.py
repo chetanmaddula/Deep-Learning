@@ -130,10 +130,8 @@ for iclass in range(0, nclass):
 
         im = color.gray2rgb(im)
         ran2 = np.random.randint(6)
-        im1 = colorize(im, ran2, saturation= 0.3 )
+        im1 = colorize(im, ran2, saturation= 0.3)
         ran3 = np.random.randint(2)
-
-
 
         # 28 by 28
         im = im.astype(float) / 255
@@ -233,6 +231,10 @@ valid_sum = tf.summary.scalar("validation_accuracy", accuracy)
 test_sum = tf.summary.scalar("test accuracy",accuracy)
 # Add a scalar summary for the snapshot loss.
 tf.summary.scalar(cross_entropy.op.name, cross_entropy)
+
+tf.summary.image('w_conv', W_conv1)
+
+
 # Build the summary operation based on the TF collection of Summaries.
 summary_op = tf.summary.merge_all()
 
@@ -252,7 +254,7 @@ batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many cl
 
 # run the training
 perm = np.arange(nsamples)
-for i in range(11000):
+for i in range(1100):
 
     np.random.shuffle(perm)
     for j in range(batchsize):
