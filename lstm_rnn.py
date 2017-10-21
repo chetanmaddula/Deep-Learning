@@ -33,7 +33,7 @@ biases = {
 
 def RNN(x, weights, biases):
     x =tf.unstack(x, nSteps, 1)
-    lstmCell = rnn_cell.BasicRNNCell(nHidden)#find which lstm to use in the documentation
+    lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)#find which lstm to use in the documentation
 
     outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
 
@@ -97,5 +97,4 @@ with tf.Session() as sess:
 
     testData = mnist.test.images.reshape((-1,nSteps,nInput))
     testLabel = mnist.test.labels
-    print("Testing Accuracy:", \
-          sess.run(accuracy,feed_dict= {x: testData, y:testLabel}))
+    print("Testing Accuracy:", sess.run(accuracy,feed_dict= {x: testData, y:testLabel}))
