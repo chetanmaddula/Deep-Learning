@@ -55,7 +55,7 @@ init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
 
-    for step in range(5500):
+    for step in range(9900):
         batchX, batchY = mnist.train.next_batch(batchSize)
         batchX = batchX.reshape((batchSize, nSteps, nInput))
 
