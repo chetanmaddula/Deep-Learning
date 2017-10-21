@@ -84,7 +84,7 @@ with tf.Session() as sess:
             summary_writer.flush()
         if step % 1100 == 0 or step == 9900:
             test_accuracy, test_summ = sess.run([accuracy, test_sum],
-                                                feed_dict={x: mnist.test.images,
+                                                feed_dict={x: mnist.test.images.reshape((-1,nSteps,nInput)),
                                                             y: mnist.test.labels})
             summary_writer.add_summary(test_summ, step)
             print("test: step %d, accuracy %g" % (step, test_accuracy))
