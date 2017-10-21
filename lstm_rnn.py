@@ -8,7 +8,7 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot=True)#call mnist functio
 
 learningRate = 1e-4
 trainingIters = 2200
-batchSize = 128
+batchSize = 50
 displayStep = 200
 
 nInput = 28#we want the input to take the 28 pixels
@@ -27,13 +27,15 @@ biases = {
 	'out': tf.Variable(tf.random_normal([nClasses]))
 }
 
+
 def RNN(x, weights, biases):
-	x =tf.unstack(x, nSteps, 1)
-	lstmCell = rnn_cell.BasicRNNCell(nHidden)#find which lstm to use in the documentation
+    x =tf.unstack(x, nSteps, 1)
+    lstmCell = rnn_cell.BasicRNNCell(nHidden)#find which lstm to use in the documentation
 
-	outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
+    outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
 
-	return tf.matmul(outputs[-1], weights['out'])+ biases['out']
+    return tf.matmul(outputs[-1], weights['out'])+ biases['out']
+
 
 pred = RNN(x, weights, biases)
 
@@ -52,9 +54,8 @@ init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
-    step = 1
 
-    while step in range(1, trainingIters+ 1):
+    for step in range(2200):
         batchX, batchY = mnist.train.next_batch(batchSize)
         batchX = batchX.reshape((batchSize, nSteps, nInput))
 
@@ -64,6 +65,7 @@ with tf.Session() as sess:
             acc = sess.run(cost, feed_dict= {x: batchX, y:batchY})
             loss = sess.run(accuracy, feed_dict= {x: batchX, y:batchY})
             print("step %d, training accuracy %g" % (step, acc))
+
 
     print('Optimisation finished')
 
