@@ -45,7 +45,7 @@ pred1 = tf.nn.softmax(pred)
 #create the cost, optimization, evaluation, and accuracy
 #for the cost softmax_cross_entropy_with_logits seems really good
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred,labels=y))
-optimizer = tf.train.GradientDescentOptimizer(learning_rate= learningRate).minimize(cost)
+optimizer = tf.train.AdamOptimizer(learning_rate= learningRate).minimize(cost)
 
 correctPred = tf.equal(tf.argmax(pred1, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
