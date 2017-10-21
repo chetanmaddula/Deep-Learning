@@ -55,15 +55,15 @@ init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
 
-    for step in range(2200):
+    for step in range(5500):
         batchX, batchY = mnist.train.next_batch(batchSize)
         batchX = batchX.reshape((batchSize, nSteps, nInput))
 
         sess.run(optimizer, feed_dict={x: batchX, y: batchY})
 
         if step % 100 == 0:
-            acc = sess.run(cost, feed_dict= {x: batchX, y:batchY})
-            loss = sess.run(accuracy, feed_dict= {x: batchX, y:batchY})
+            loss = sess.run(cost, feed_dict= {x: batchX, y:batchY})
+            acc = sess.run(accuracy, feed_dict= {x: batchX, y:batchY})
             print("step %d, training accuracy %g" % (step, acc))
 
 
