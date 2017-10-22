@@ -232,7 +232,7 @@ test_sum = tf.summary.scalar("test accuracy",accuracy)
 # Add a scalar summary for the snapshot loss.
 tf.summary.scalar(cross_entropy.op.name, cross_entropy)
 
-tf.summary.image('w_conv', W_conv1)
+#tf.summary.image('w_conv', W_conv1)
 
 
 # Build the summary operation based on the TF collection of Summaries.
