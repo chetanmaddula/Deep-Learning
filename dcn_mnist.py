@@ -108,7 +108,7 @@ n_train = 1000  # per class
 n_test = 100  # per class
 nclass = 10  # number of classes
 imsize = 28
-nchannels = 3
+nchannels = 1
 batchsize = 100
 nsamples = 10000
 
@@ -124,37 +124,37 @@ for iclass in range(0, nclass):
         path = '~/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
         im = misc.imread(path);  # 28 by 28
-        if random.randint(0,1):
-            im = np.invert(im)
+        # if random.randint(0,1):
+        #     im = np.invert(im)
 
 
-        im = color.gray2rgb(im)
-        ran2 = np.random.randint(6)
-        im1 = colorize(im, ran2, saturation= 0.3)
-        ran3 = np.random.randint(2)
+        # im = color.gray2rgb(im)
+        # ran2 = np.random.randint(6)
+        # im1 = colorize(im, ran2, saturation= 0.3)
+        # ran3 = np.random.randint(2)
 
         # 28 by 28
         im = im.astype(float) / 255
-        im1 = im1.astype(float) / 255
-        ran1 = np.random.randint(2)
+        # im1 = im1.astype(float) / 255
+        # ran1 = np.random.randint(2)
 
-        itrain += 1
-        if ran1 == 0:
-            if ran3 == 0:
-                Train[itrain, :, :] = im
-            else:
-                Train[itrain, :, :] = np.fliplr(im)
-        else:
-            if ran3 == 0:
-                Train[itrain, :, :] = im1
-            else:
-                Train[itrain, :, :] = np.fliplr(im1)
+        # itrain += 1
+        # if ran1 == 0:
+        #     if ran3 == 0:
+        Train[itrain, :, :] = im
+            # else:
+            #     Train[itrain, :, :] = np.fliplr(im)
+        # else:
+        #     if ran3 == 0:
+        #         Train[itrain, :, :] = im1
+        #     else:
+        #         Train[itrain, :, :] = np.fliplr(im1)
         LTrain[itrain, iclass] = 1
     for isample in range(0, n_test):
         path = '~/Deep-Learning/CIFAR10/Test/%d/Image%05d.png' % (iclass, isample)
         path = os.path.expanduser(path)
         im = misc.imread(path);
-        im = color.gray2rgb(im)# 28 by 28
+        # im = color.gray2rgb(im)# 28 by 28
         im = im.astype(float) / 255
         itest += 1
         Test[itest, :, :] = im
@@ -172,7 +172,7 @@ y_ = tf.placeholder(tf.float32, shape=[None,10])
 # first convolutional layer
 
 
-W_conv1 = weight_variable([5, 5, 3, 32])
+W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 h_conv1 = tf.nn.relu(conv2d(x, W_conv1) + b_conv1)
 
