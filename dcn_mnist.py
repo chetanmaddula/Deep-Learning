@@ -55,7 +55,7 @@ n_train = 1000  # per class
 n_test = 100  # per class
 nclass = 10  # number of classes
 imsize = 28
-nchannels = 3
+nchannels = 1
 batchsize = 100
 nsamples = 10000
 
@@ -100,7 +100,7 @@ y_ = tf.placeholder(tf.float32, shape=[None,10])
 # first convolutional layer
 
 
-W_conv1 = weight_variable([5, 5, 3, 32])
+W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 h_conv1 = tf.nn.relu(conv2d(x, W_conv1) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1)
@@ -130,6 +130,22 @@ b_fc2 = bias_variable([10])
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
 # FILL IN THE FOLLOWING CODE TO SET UP THE TRAINING
+W1_a = W_conv1  # [5, 5, 1, 32]
+W1pad = tf.zeros([5, 5, 1, 1])  # [5, 5, 1, 4]  - four zero kernels for padding
+# We have a 6 by 6 grid of kernepl visualizations. yet we only have 32 filters
+# Therefore, we concatenate 4 empty filters
+W1_b = tf.concat(3, [W1_a, W1pad, W1pad, W1pad, W1pad])  # [5, 5, 1, 36]
+W1_c = tf.split(3, 36, W1_b)  # 36 x [5, 5, 1, 1]
+W1_row0 = tf.concat(0, W1_c[0:6])  # [30, 5, 1, 1]
+W1_row1 = tf.concat(0, W1_c[6:12])  # [30, 5, 1, 1]
+W1_row2 = tf.concat(0, W1_c[12:18])  # [30, 5, 1, 1]
+W1_row3 = tf.concat(0, W1_c[18:24])  # [30, 5, 1, 1]
+W1_row4 = tf.concat(0, W1_c[24:30])  # [30, 5, 1, 1]
+W1_row5 = tf.concat(0, W1_c[30:36])  # [30, 5, 1, 1]
+W1_d = tf.concat(1, [W1_row0, W1_row1, W1_row2, W1_row3, W1_row4, W1_row5])  # [30, 30, 1, 1]
+W1_e = tf.reshape(W1_d, [1, 30, 30, 1])
+Wtag = tf.placeholder(tf.string, None)
+image_summary_t = tf.image_summary("Visualize_kernels", W1_e)
 
 # setup training
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits= y_conv))
