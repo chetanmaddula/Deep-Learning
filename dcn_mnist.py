@@ -141,7 +141,7 @@ for iclass in range(0, nclass):
         # itrain += 1
         # if ran1 == 0:
         #     if ran3 == 0:
-        Train[itrain, :, :] = im
+        Train[itrain, :, :,0] = im
             # else:
             #     Train[itrain, :, :] = np.fliplr(im)
         # else:
@@ -157,7 +157,7 @@ for iclass in range(0, nclass):
         # im = color.gray2rgb(im)# 28 by 28
         im = im.astype(float) / 255
         itest += 1
-        Test[itest, :, :] = im
+        Test[itest, :, :,0] = im
         LTest[itest, iclass] = 1  # 1-hot lable
 
 # FILL IN THE CODE BELOW TO BUILD YOUR NETWORK
