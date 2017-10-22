@@ -161,7 +161,7 @@ batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many cl
 
 # run the training
 perm = np.arange(nsamples)
-for i in range(1100):
+for i in range(5500):
 
     np.random.shuffle(perm)
     for j in range(batchsize):
