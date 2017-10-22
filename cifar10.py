@@ -76,12 +76,6 @@ def max_pool_2x2(x):
     return h_max
 
 
-def colorize(image1, hue, saturation = 1):
-    hsv = color.rgb2hsv(image1)
-    hsv[:,:,1] = saturation
-    hsv[:,:,0] = hue
-    rgb1 = color.hsv2rgb(hsv)
-    return rgb1
 
 
 def main():
@@ -93,7 +87,7 @@ def main():
     imsize = 28
     nchannels = 3
     batchsize = 80
-    nsamples = 1000
+    nsamples = 10000
 
     Train = np.zeros((n_train * nclass, imsize, imsize, nchannels))
     Test = np.zeros((n_test * nclass, imsize, imsize, nchannels))
@@ -106,35 +100,17 @@ def main():
         for isample in range(0, n_train):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path);  # 28 by 28
-            im = color.gray2rgb(im)
-            ran2 = np.random.randint(6)
-            im1 = colorize(im, ran2, saturation=0.3)
-            ran3 = np.random.randint(2)
-
-            # 28 by 28
             im = im.astype(float) / 255
-            im1 = im1.astype(float) / 255
-            ran1 = np.random.randint(2)
-
             itrain += 1
-            if ran1 == 0:
-                if ran3 == 0:
-                    Train[itrain, :, :] = im
-                else:
-                    Train[itrain, :, :] = np.fliplr(im)
-            else:
-                if ran3 == 0:
-                    Train[itrain, :, :] = im1
-                else:
-                    Train[itrain, :, :] = np.fliplr(im1)
+            Train[itrain, :, :,0] = im
             LTrain[itrain, iclass] = 1  # 1-hot lable
+
         for isample in range(0, n_test):
             path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
-            im = color.gray2rgb(im)
             itest += 1
-            Test[itest,:,:] = im
+            Test[itest,:,:,0] = im
             LTest[itest,iclass] = 1 # 1-hot lable
 
     sess = tf.InteractiveSession()
@@ -146,8 +122,7 @@ def main():
     # model
     #create your model
     #w_conv1 = weight_variable([5,5,1,32])
-    w_conv1 = tf.get_variable("W1", shape=[5,5,3,32],
-                    initializer=tf.contrib.layers.xavier_initializer())
+    w_conv1 = weight_variable([5,5,3,32])
     b_conv1 = bias_variable([32])
 
     h_conv1 = tf.nn.relu(conv2d(tf_data,w_conv1) + b_conv1)
@@ -176,14 +151,14 @@ def main():
                             initializer=tf.contrib.layers.xavier_initializer())
 
     b_fc2 = bias_variable([10])
-    h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+    y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 
     # --------------------------------------------------
     # loss
     #set up the loss, optimization, evaluation, and accuracy
-    cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf_labels, logits=h_fc2))
-    optimizer = tf.train.AdamOptimizer(1e-6).minimize(cross_entropy)
-    correct_prediction = tf.equal(tf.argmax(h_fc2, 1), tf.argmax(tf_labels, 1))
+    cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf_labels, logits=y_conv))
+    optimizer = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+    correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(tf_labels, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 
@@ -214,9 +189,6 @@ def main():
         if i%100 == 0:
             train_acc = accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})
             print("train accuracy %g"%train_acc) #calculate train accuracy and print it
-            cross_entro = cross_entropy.eval(feed_dict={tf_data: batch_xs,
-                                                        tf_labels: batch_ys, keep_prob: 1.0})
-            print("step %d, cross entropy %g" % (i, cross_entro))
 
             summary_str = sess.run(summary_op, feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 0.5})
             summary_writer.add_summary(summary_str, i)
