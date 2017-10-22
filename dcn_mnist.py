@@ -134,15 +134,15 @@ W1_a = W_conv1  # [5, 5, 1, 32]
 W1pad = tf.zeros([5, 5, 1, 1])  # [5, 5, 1, 4]  - four zero kernels for padding
 # We have a 6 by 6 grid of kernepl visualizations. yet we only have 32 filters
 # Therefore, we concatenate 4 empty filters
-W1_b = tf.concat(3, [W1_a, W1pad, W1pad, W1pad, W1pad])  # [5, 5, 1, 36]
-W1_c = tf.split(3, 36, W1_b)  # 36 x [5, 5, 1, 1]
-W1_row0 = tf.concat(0, W1_c[0:6])  # [30, 5, 1, 1]
-W1_row1 = tf.concat(0, W1_c[6:12])  # [30, 5, 1, 1]
-W1_row2 = tf.concat(0, W1_c[12:18])  # [30, 5, 1, 1]
-W1_row3 = tf.concat(0, W1_c[18:24])  # [30, 5, 1, 1]
-W1_row4 = tf.concat(0, W1_c[24:30])  # [30, 5, 1, 1]
-W1_row5 = tf.concat(0, W1_c[30:36])  # [30, 5, 1, 1]
-W1_d = tf.concat(1, [W1_row0, W1_row1, W1_row2, W1_row3, W1_row4, W1_row5])  # [30, 30, 1, 1]
+W1_b = tf.concat([W1_a, W1pad, W1pad, W1pad, W1pad], 3)  # [5, 5, 1, 36]
+W1_c = tf.split(W1_b, 36, 3)  # 36 x [5, 5, 1, 1]
+W1_row0 = tf.concat(W1_c[0:6], 0)  # [30, 5, 1, 1]
+W1_row1 = tf.concat(W1_c[6:12], 0)  # [30, 5, 1, 1]
+W1_row2 = tf.concat(W1_c[12:18], 0)  # [30, 5, 1, 1]
+W1_row3 = tf.concat(W1_c[18:24], 0)  # [30, 5, 1, 1]
+W1_row4 = tf.concat(W1_c[24:30], 0)  # [30, 5, 1, 1]
+W1_row5 = tf.concat(W1_c[30:36], 0)  # [30, 5, 1, 1]
+W1_d = tf.concat([W1_row0, W1_row1, W1_row2, W1_row3, W1_row4, W1_row5],1)  # [30, 30, 1, 1]
 W1_e = tf.reshape(W1_d, [1, 30, 30, 1])
 Wtag = tf.placeholder(tf.string, None)
 image_summary_t = tf.image_summary("Visualize_kernels", W1_e)
