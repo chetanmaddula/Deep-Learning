@@ -213,14 +213,14 @@ accuracy = tf.reduce_mean(tf.to_float(correct_prediction))
 
 # hist(x_image,'x_img')
 
-hist(W_conv1,'w_conv1')
+#hist(W_conv1,'w_conv1')
 #hist(b_conv1,'b_conv1')
-hist(h_conv1,'h_conv1')
+#hist(h_conv1,'h_conv1')
 #hist(h_pool1,'h_pool1')
 
-hist(W_conv2,'w_conv2')
+# hist(W_conv2,'w_conv2')
 #    hist(b_conv2,'b_conv2')
-hist(h_conv2,'h_conv2')
+# hist(h_conv2,'h_conv2')
 #    hist(h_pool2,'h_pool2')
 
 #    hist(W_fc1,'w_fc1')
