@@ -145,7 +145,7 @@ W1_row5 = tf.concat(W1_c[30:36], 0)  # [30, 5, 1, 1]
 W1_d = tf.concat([W1_row0, W1_row1, W1_row2, W1_row3, W1_row4, W1_row5],1)  # [30, 30, 1, 1]
 W1_e = tf.reshape(W1_d, [1, 30, 30, 1])
 Wtag = tf.placeholder(tf.string, None)
-image_summary_t = tf.image_summary("Visualize_kernels", W1_e)
+image_summary_t = tf.summary.image("Visualize_kernels", W1_e)
 
 # setup training
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits= y_conv))
