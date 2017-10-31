@@ -132,10 +132,10 @@ y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
 # FILL IN THE FOLLOWING CODE TO SET UP THE TRAINING
 W1_a = W_conv1  # [5, 5, 1, 32]
 W1pad = tf.zeros([5, 5, 1, 1])  # [5, 5, 1, 4]  - four zero kernels for padding
-# We have a 6 by 6 grid of kernepl visualizations. yet we only have 32 filters
+# We have a 6 by 6 grid of kernel visualizations. yet we only have 32 filters
 # Therefore, we concatenate 4 empty filters
-W1_b = tf.concat([W1_a, W1pad, W1pad, W1pad, W1pad], 1)  # [5, 5, 1, 36]
-W1_c = tf.split(W1_b, 36, 1)  # 36 x [5, 5, 1, 1]
+W1_b = tf.concat([W1_a, W1pad, W1pad, W1pad, W1pad], 3)  # [5, 5, 1, 36]
+W1_c = tf.split(W1_b, 36, 3)  # 36 x [5, 5, 1, 1]
 W1_row0 = tf.concat(W1_c[0:6], 0)  # [30, 5, 1, 1]
 W1_row1 = tf.concat(W1_c[6:12], 0)  # [30, 5, 1, 1]
 W1_row2 = tf.concat(W1_c[12:18], 0)  # [30, 5, 1, 1]
