@@ -32,8 +32,13 @@ biases = {
 
 
 def RNN(x, weights, biases):
-    x =tf.unstack(x, nSteps, 1)
-    lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)#find which lstm to use in the documentation
+    x = tf.transpose(x, [1, 0, 2])
+    x = tf.reshape(x, [-1, nInput])
+    x = tf.split(x, nSteps, 0)
+
+    lstmCell = rnn_cell.BasicRNNCell(nHidden)
+    # lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)
+    # lstmCell = rnn_cell.GRUCell(nHidden) #find which lstm to use in the documentation
 
     outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
 
@@ -52,13 +57,13 @@ optimizer = tf.train.AdamOptimizer(learning_rate= learningRate).minimize(cost)
 
 correctPred = tf.equal(tf.argmax(pred1, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
+train_sum = tf.summary.scalar("train accuracy",accuracy)
 
-test_sum = tf.summary.scalar("test accuracy",accuracy)
 tf.summary.scalar("Cost", cost)
     # Build the summary operation based on the TF collection of Summaries.
 
 summary_op = tf.summary.merge_all()
-
+test_sum = tf.summary.scalar("test accuracy",accuracy)
 init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
@@ -92,6 +97,7 @@ with tf.Session() as sess:
 
             checkpoint_file = os.path.join(result_dir, 'checkpoint')
             saver.save(sess, checkpoint_file, global_step=step)
+            summary_writer.flush()
 
 
     print('Optimisation finished')
