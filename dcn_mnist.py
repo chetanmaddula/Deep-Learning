@@ -154,12 +154,13 @@ correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.to_float(correct_prediction))
 
 # hist(x_image,'x_img')
-
-test_sum = tf.summary.scalar("test accuracy",accuracy)
+tf.summary.scalar("Cross Entropy", cross_entropy)
+train_sum = tf.summary.scalar("train accuracy",accuracy)
 # Add a scalar summary for the snapshot loss.
 # Build the summary operation based on the TF collection of Summaries.
 summary_op = tf.summary.merge_all()
 
+test_sum = tf.summary.scalar("test accuracy",accuracy)
 # Add the variable initializer Op.
 init = tf.initialize_all_variables()
 
@@ -207,6 +208,7 @@ for i in range(5500):
         print("test: step %d, accuracy %g" % (i, test_accuracy))
         checkpoint_file = os.path.join(result_dir, 'checkpoint')
         saver.save(sess, checkpoint_file, global_step=i)
+        summary_writer.flush()
 
     train_step.run(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5}) # run one train_step
 

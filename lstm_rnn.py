@@ -16,7 +16,7 @@ result_dir = './results/'
 
 nInput = 28#we want the input to take the 28 pixels
 nSteps = 28#every 28
-nHidden = 128#number of neurons for the RNN
+nHidden = 128  #number of neurons for the RNN
 nClasses = 10#this is MNIST so you know
 
 x = tf.placeholder('float', [None, nSteps, nInput])
@@ -56,6 +56,7 @@ accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
 test_sum = tf.summary.scalar("test accuracy",accuracy)
 tf.summary.scalar("Cost", cost)
     # Build the summary operation based on the TF collection of Summaries.
+
 summary_op = tf.summary.merge_all()
 
 init = tf.global_variables_initializer()
