@@ -36,8 +36,8 @@ def RNN(x, weights, biases):
     x = tf.reshape(x, [-1, nInput])
     x = tf.split(x, nSteps, 0)
 
-    lstmCell = rnn_cell.BasicRNNCell(nHidden)
-    # lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)
+    #lstmCell = rnn_cell.BasicRNNCell(nHidden)
+    lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)
     # lstmCell = rnn_cell.GRUCell(nHidden) #find which lstm to use in the documentation
 
     outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
@@ -74,7 +74,7 @@ with tf.Session() as sess:
 
     sess.run(init)
 
-    for step in range(9900):
+    for step in range(5500):
         batchX, batchY = mnist.train.next_batch(batchSize)
         batchX = batchX.reshape((batchSize, nSteps, nInput))
 
