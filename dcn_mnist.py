@@ -153,7 +153,11 @@ train_step = tf.train.RMSPropOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.to_float(correct_prediction))
 
-# hist(x_image,'x_img')
+hist(h_conv1,'conv1')
+hist(h_conv2,'conv2')
+
+
+
 tf.summary.scalar("Cross Entropy", cross_entropy)
 train_sum = tf.summary.scalar("train accuracy",accuracy)
 # Add a scalar summary for the snapshot loss.
