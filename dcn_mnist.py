@@ -149,7 +149,7 @@ image_summary_t = tf.summary.image("Visualize_kernels", W1_e)
 
 # setup training
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits= y_conv))
-train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+train_step = tf.train.RMSPropOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.to_float(correct_prediction))
 
@@ -178,7 +178,7 @@ batch_ys = np.zeros([batchsize, nclass])  # setup as [batchsize, the how many cl
 
 # run the training
 perm = np.arange(nsamples)
-for i in range(5500):
+for i in range(2200):
 
     np.random.shuffle(perm)
     for j in range(batchsize):
