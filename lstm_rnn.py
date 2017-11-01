@@ -16,7 +16,7 @@ result_dir = './results/'
 
 nInput = 28#we want the input to take the 28 pixels
 nSteps = 28#every 28
-nHidden = 128  #number of neurons for the RNN
+nHidden = 25  #number of neurons for the RNN
 nClasses = 10#this is MNIST so you know
 
 x = tf.placeholder('float', [None, nSteps, nInput])
@@ -37,8 +37,8 @@ def RNN(x, weights, biases):
     x = tf.split(x, nSteps, 0)
 
     #lstmCell = rnn_cell.BasicRNNCell(nHidden)
-    #lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)
-    lstmCell = rnn_cell.GRUCell(nHidden) #find which lstm to use in the documentation
+    lstmCell = rnn_cell.BasicLSTMCell(nHidden, forget_bias= 1.0)
+    #lstmCell = rnn_cell.GRUCell(nHidden) #find which lstm to use in the documentation
 
     outputs, states = rnn.static_rnn(lstmCell, x, dtype= tf.float32)#for the rnn where to get the output and hidden state
 
