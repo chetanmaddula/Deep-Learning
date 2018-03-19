@@ -1,10 +1,7 @@
 from scipy import misc
 import numpy as np
 import tensorflow as tf
-import random
-import matplotlib.pyplot as plt
-import matplotlib as mp
-from skimage import color
+
 
 
 # --------------------------------------------------
@@ -41,8 +38,8 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 
-def conv2d(x, W):
-    """
+def conv2d(x, W, b, sum1, shape1):
+    '''
     Perform 2-D convolution
     :param x: input tensor of size [N, W, H, Cin] where
     N: the number of images
@@ -55,13 +52,24 @@ def conv2d(x, W):
     Cin: the number of the channels of the filters = the number of channels of images
     Cout: the number of filters
     :return: a tensor of features extracted by the filters, a.k.a. the results after convolution
-    """
+    '''
 
     # IMPLEMENT YOUR CONV2D HERE
-    h_conv = tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
+    xmax = tf.reduce_max(x)
 
-    return h_conv
+    x1 = tf.round(tf.multiply(x, 2**7))
 
+    w1 = tf.round(tf.multiply(W, 2 ** 8))
+    b1 = tf.round(tf.multiply(b, 2**8))
+
+    k = tf.div(x1,128)
+    k1 = tf.div(w1, 128)
+    b2 = tf.div(b1, 128)
+    mat1 = tf.greater(tf.nn.conv2d(k, k1, strides=[1, 1, 1, 1], padding='SAME')+b2, 0)
+    sum1 = tf.add(tf.count_nonzero(mat1),sum1)
+    shape1 = tf.add(tf.size(mat1),shape1)
+
+    return tf.multiply(tf.nn.conv2d(x,W, strides=[1,1,1,1], padding='SAME')+b, tf.to_float(mat1)),sum1,shape1
 
 def max_pool_2x2(x):
     '''
@@ -98,7 +106,8 @@ def main():
     itest = -1
     for iclass in range(0, nclass):
         for isample in range(0, n_train):
-            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
+            path = '/home/chetan/Downloads/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
+            print(path)
             im = misc.imread(path);  # 28 by 28
             im = im.astype(float) / 255
             itrain += 1
@@ -106,7 +115,7 @@ def main():
             LTrain[itrain, iclass] = 1  # 1-hot lable
 
         for isample in range(0, n_test):
-            path = '/home/chetan/PycharmProjects/Deep-Learning/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
+            path = '/home/chetan/Downloads/CIFAR10/Train/%d/Image%05d.png' % (iclass,isample)
             im = misc.imread(path); # 28 by 28
             im = im.astype(float)/255
             itest += 1
@@ -122,10 +131,13 @@ def main():
     # model
     #create your model
     #w_conv1 = weight_variable([5,5,1,32])
+    sum1 = tf.Variable(0, dtype=tf.int64)
+    shape1 = tf.Variable(0, dtype=tf.int32)
+
     w_conv1 = weight_variable([5,5,3,32])
     b_conv1 = bias_variable([32])
 
-    h_conv1 = tf.nn.relu(conv2d(tf_data,w_conv1) + b_conv1)
+    h_conv1, sum1, shape1 = conv2d(tf_data, w_conv1, b_conv1, sum1, shape1)
     h_pool1 = max_pool_2x2(h_conv1)
 
     #w_conv2 = weight_variable([5,5,32,64])
@@ -133,7 +145,7 @@ def main():
                               initializer=tf.contrib.layers.xavier_initializer())
     b_conv2 = bias_variable([64])
 
-    h_conv2 = tf.nn.relu(conv2d(h_pool1, w_conv2) + b_conv2)
+    h_conv2, sum1, shape1 = conv2d(h_pool1, w_conv2, b_conv2, sum1, shape1)
     h_pool2 = max_pool_2x2(h_conv2)
     h_pool2_flat = tf.reshape(h_pool2,[-1, 7*7*64])
 
@@ -180,7 +192,7 @@ def main():
     batch_xs = np.zeros([batchsize,imsize,imsize,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
     batch_ys = np.zeros([batchsize,nclass])#setup as [batchsize, the how many classes]
 
-    for i in range(200): # try a small iteration size once it works then continue
+    for i in range(4400): # try a small iteration size once it works then continue
         perm = np.arange(nsamples)
         np.random.shuffle(perm)
         for j in range(batchsize):
@@ -201,6 +213,11 @@ def main():
     # test
 
     print("test accuracy %g"%accuracy.eval(feed_dict={tf_data: Test, tf_labels: LTest, keep_prob: 1.0}))
+    print("test sum %g" % sum1.eval(feed_dict={
+        tf_data: Test, tf_labels: LTest, keep_prob: 1.0}))
+
+    print("test shape %g" % shape1.eval(feed_dict={
+        tf_data: Test, tf_labels: LTest, keep_prob: 1.0}))
 
     sess.close()
 
